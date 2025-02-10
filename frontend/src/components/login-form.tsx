@@ -1,3 +1,4 @@
+import { LucideMessageCircle, LucidePhoneCall } from "lucide-react";
 import { Button } from "../components/ui/button";
 import {
 	Card,
@@ -40,12 +41,12 @@ export function LoginForm({
 								<div className="grid gap-2">
 									<div className="flex items-center">
 										<Label htmlFor="password">Password</Label>
-										<a
+										{/* <a
 											href="#"
 											className="ml-auto text-sm underline-offset-4 hover:underline"
 										>
 											Forgot your password?
-										</a>
+										</a> */}
 									</div>
 									<Input id="password" type="password" required />
 								</div>
@@ -55,6 +56,25 @@ export function LoginForm({
 							</div>
 							<div className="text-center text-sm">
 								Contact support if you have any login issues
+								<div className="flex items-center justify-center pt-1">
+									<Button
+										variant="ghost"
+										size="icon"
+										onClick={() =>
+											window.open("https://wa.me/+8801955206804", "_blank")
+										}
+									>
+										<LucideMessageCircle />
+									</Button>
+
+									<Button
+										variant="ghost"
+										size="icon"
+										onClick={() => (window.location.href = "tel:+1234567890")}
+									>
+										<LucidePhoneCall />
+									</Button>
+								</div>
 							</div>
 						</div>
 					</form>

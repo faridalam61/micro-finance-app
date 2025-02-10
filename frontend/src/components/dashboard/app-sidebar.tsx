@@ -1,7 +1,11 @@
+import { Link } from "react-router";
+
 import {
+	Bell,
 	Bot,
 	GalleryVerticalEnd,
-	Settings2,
+	Home,
+	Menu,
 	SquareTerminal,
 } from "lucide-react";
 
@@ -9,7 +13,12 @@ import {
 	Sidebar,
 	SidebarContent,
 	SidebarFooter,
+	SidebarGroup,
+	SidebarGroupContent,
 	SidebarHeader,
+	SidebarMenu,
+	SidebarMenuButton,
+	SidebarMenuItem,
 	SidebarRail,
 } from "../../components/ui/sidebar";
 import { TeamSwitcher } from "./team-switcher";
@@ -29,7 +38,6 @@ const data = {
 			logo: GalleryVerticalEnd,
 			plan: "Management system",
 		},
-		
 	],
 	navMain: [
 		{
@@ -65,38 +73,56 @@ const data = {
 					title: "Collect Installment",
 					url: "/dashboard/collect-loan",
 				},
-				
-			
 			],
 		},
-		
-		{
-			title: "Settings",
-			url: "#",
-			icon: Settings2,
-			
-		},
 	],
-	
+};
+
+const data2 = {
+	nav: [
+		{ name: "Cash in/out", url: "/dashboard/cash-in-or-out", icon: Bell },
+		{ name: "Ledger", url: "/dashboard/ledger", icon: Menu },
+		{ name: "Activities", url: "/dashboard/activities", icon: Home },
+		{ name: "Users", url: "/dashboard/users", icon: Home },
+	],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	return (
 		<>
-		
-		<Sidebar collapsible="icon" {...props}>
-			<SidebarHeader>
-				<TeamSwitcher teams={data.teams} />
-			</SidebarHeader>
-			<SidebarContent>
-				<NavMain items={data.navMain} />
-			</SidebarContent>
-			<SidebarFooter>
-				<NavUser user={data.user} />
-			</SidebarFooter>
-			<SidebarRail />
-		</Sidebar>
-		
+			<Sidebar collapsible="icon" {...props}>
+				<SidebarHeader>
+					<TeamSwitcher teams={data.teams} />
+				</SidebarHeader>
+				<SidebarContent>
+					<NavMain items={data.navMain} />
+
+					<SidebarGroup>
+						<SidebarGroupContent>
+							<SidebarMenu>
+								{data2.nav.map((item) => (
+									<SidebarMenuItem key={item.name}>
+										<SidebarMenuButton
+											asChild
+											isActive={item.name === "Messages & media"}
+										>
+											<Link to={item.url}>
+												<item.icon />
+												<span>{item.name}</span>
+											</Link>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+								))}
+							</SidebarMenu>
+						</SidebarGroupContent>
+					</SidebarGroup>
+				</SidebarContent>
+
+				<SidebarFooter>
+					<NavUser user={data.user} />
+				</SidebarFooter>
+				<SidebarRail />
+			</Sidebar>
 		</>
 	);
 }

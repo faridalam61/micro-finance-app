@@ -20,29 +20,29 @@ function App() {
 				<Route path="/login" element={<LoginPage />} />
 
 				<Route element={<DefaultLayout />}>
-					<Route index element={<Dashboard />} />
+					<Route path="/" element={<Dashboard />} />
+					<Route path="/dashboard" element={<Dashboard />} />
 
 					{/* Loan routes */}
-					<Route path="/dashboard/loans" element={<AllLoans/>}/>
-					<Route path="/dashboard/application" element={<LoanApplication/>}/>
-					<Route path="/dashboard/disburse" element={<LoanDisburse/>}/>
+					<Route path="/dashboard/loans" element={<AllLoans />} />
+					<Route path="/dashboard/application" element={<LoanApplication />} />
+					<Route path="/dashboard/disburse" element={<LoanDisburse />} />
 
 					{/* Collection routes */}
-					<Route path="/dashboard/collections" element={<LoanCollections/>}/>
-					<Route path="/dashboard/collect-loan" element={<CollectLoan/>}/>
+					<Route path="/dashboard/collections" element={<LoanCollections />} />
+					<Route path="/dashboard/collect-loan" element={<CollectLoan />} />
 
 					{/* Users */}
-					<Route path="/dashboard/users" element={<UsersPage/>}/>
+					<Route path="/dashboard/users" element={<UsersPage />} />
 
 					{/* Ledger */}
-					<Route path="/dashboard/ledger" element={<LedgerPage/>}/>
+					<Route path="/dashboard/ledger" element={<LedgerPage />} />
 
 					{/* Activities */}
-					<Route path="/dashboard/activities" element={<ActivitiesPage/>}/>
-					
+					<Route path="/dashboard/activities" element={<ActivitiesPage />} />
+
 					{/* Cash in/out */}
-					<Route path="/dashboard/cash-in-or-out" element={<CashInOutPage/>}/>
-					
+					<Route path="/dashboard/cash-in-or-out" element={<CashInOutPage />} />
 				</Route>
 				{/* 
 			<Route path="concerts">
