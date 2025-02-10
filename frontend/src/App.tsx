@@ -3,6 +3,15 @@ import DefaultLayout from "./layout/DefaultLayout";
 import Dashboard from "./pages/Dashboard";
 import { ThemeProvider } from "./components/theme-provider";
 import LoginPage from "./pages/LoginPage";
+import AllLoans from "./pages/loan/AllLoans";
+import LoanDisburse from "./pages/loan/LoanDisburse";
+import LoanApplication from "./pages/loan/Application";
+import LoanCollections from "./pages/collection/LoanCollections";
+import CollectLoan from "./pages/collection/CollectLoan";
+import UsersPage from "./pages/UsersPage";
+import LedgerPage from "./pages/LedgerPage";
+import ActivitiesPage from "./pages/ActivitiesPage";
+import CashInOutPage from "./pages/CashInOutPage";
 
 function App() {
 	return (
@@ -12,6 +21,28 @@ function App() {
 
 				<Route element={<DefaultLayout />}>
 					<Route index element={<Dashboard />} />
+
+					{/* Loan routes */}
+					<Route path="/dashboard/loans" element={<AllLoans/>}/>
+					<Route path="/dashboard/application" element={<LoanApplication/>}/>
+					<Route path="/dashboard/disburse" element={<LoanDisburse/>}/>
+
+					{/* Collection routes */}
+					<Route path="/dashboard/collections" element={<LoanCollections/>}/>
+					<Route path="/dashboard/collect-loan" element={<CollectLoan/>}/>
+
+					{/* Users */}
+					<Route path="/dashboard/users" element={<UsersPage/>}/>
+
+					{/* Ledger */}
+					<Route path="/dashboard/ledger" element={<LedgerPage/>}/>
+
+					{/* Activities */}
+					<Route path="/dashboard/activities" element={<ActivitiesPage/>}/>
+					
+					{/* Cash in/out */}
+					<Route path="/dashboard/cash-in-or-out" element={<CashInOutPage/>}/>
+					
 				</Route>
 				{/* 
 			<Route path="concerts">

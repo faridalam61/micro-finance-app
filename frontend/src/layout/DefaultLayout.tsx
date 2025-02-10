@@ -1,3 +1,4 @@
+import { Outlet } from "react-router";
 import { AppSidebar } from "../components/dashboard/app-sidebar";
 import { ModeToggle } from "../components/mode-toggler";
 import {
@@ -43,12 +44,14 @@ export default function DefaultLayout() {
 					</div>
 				</header>
 				<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-					<div className="grid auto-rows-min gap-4 md:grid-cols-3">
+					{/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">
 						<div className="aspect-video rounded-xl bg-muted/50" />
 						<div className="aspect-video rounded-xl bg-muted/50" />
 						<div className="aspect-video rounded-xl bg-muted/50" />
+					</div> */}
+					<div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min p-6" >
+					<Outlet/>
 					</div>
-					<div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
 				</div>
 			</SidebarInset>
 		</SidebarProvider>
