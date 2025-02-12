@@ -1,8 +1,7 @@
+import LedgerBook from "../components/ledger-book";
 
 const LedgerPage = () => {
-  return (
-    <div>LedgerPage</div>
-  )
-}
+	return <LedgerBook />;
+};
 
-export default LedgerPage
+export default LedgerPage;

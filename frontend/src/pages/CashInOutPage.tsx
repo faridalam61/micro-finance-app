@@ -9,19 +9,18 @@ import {
 
 const CashInOutPage = () => {
 	return (
-		<div className="w-full md:max-w-md mx-auto">
-			<Card>
-				<CardHeader>
-					<CardTitle>Cash In/Out</CardTitle>
-					<CardDescription>
-						Make a transection select right type
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<CashInOutForm />
-				</CardContent>
-			</Card>
-		</div>
+		// <div>
+		// 	<CashInOutForm />
+		// </div>
+		<Card>
+			<CardHeader>
+				<CardTitle>Cash In/Out</CardTitle>
+				<CardDescription>Make a transection select right type</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<CashInOutForm />
+			</CardContent>
+		</Card>
 	);
 };
 

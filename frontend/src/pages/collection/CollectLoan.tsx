@@ -1,8 +1,7 @@
+import CollectInstallmentForm from "../../components/collect-installment";
 
 const CollectLoan = () => {
-  return (
-    <div>CollectLoan</div>
-  )
-}
+	return <CollectInstallmentForm />;
+};
 
-export default CollectLoan
+export default CollectLoan;

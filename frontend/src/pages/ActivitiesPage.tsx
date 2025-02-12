@@ -1,8 +1,7 @@
+import ActivityComponent from "../components/activities";
 
 const ActivitiesPage = () => {
-  return (
-    <div>ActivitiesPage</div>
-  )
-}
+	return <ActivityComponent />;
+};
 
-export default ActivitiesPage
+export default ActivitiesPage;
