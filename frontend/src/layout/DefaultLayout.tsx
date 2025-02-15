@@ -80,7 +80,7 @@ export default function DefaultLayout() {
 						<div className="aspect-video rounded-xl bg-muted/50" />
 					</div> */}
 					{/* <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min p-6 items-center justify-center"> */}
-					<ScrollArea className="h-[92vh] w-full  overflow-hidden">
+					<ScrollArea className="h-[90vh] w-full  overflow-hidden">
 						<Outlet />
 					</ScrollArea>
 				</div>

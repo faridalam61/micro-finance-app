@@ -15,6 +15,7 @@ import {
 	SidebarFooter,
 	SidebarGroup,
 	SidebarGroupContent,
+	SidebarGroupLabel,
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
@@ -81,7 +82,6 @@ const data = {
 const data2 = {
 	nav: [
 		{ name: "Dashboard", url: "/dashboard", icon: Bell },
-		{ name: "Cash in/out", url: "/dashboard/cash-in-or-out", icon: Bell },
 		{ name: "Ledger", url: "/dashboard/ledger", icon: Menu },
 		{ name: "Activities", url: "/dashboard/activities", icon: Home },
 		{ name: "Users", url: "/dashboard/users", icon: Home },
@@ -96,9 +96,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<TeamSwitcher teams={data.teams} />
 				</SidebarHeader>
 				<SidebarContent>
-					<NavMain items={data.navMain} />
+					<SidebarGroup className="-mb-5">
+						<SidebarGroupLabel>Admin Tools</SidebarGroupLabel>
 
-					<SidebarGroup>
 						<SidebarGroupContent>
 							<SidebarMenu>
 								{data2.nav.map((item) => (
@@ -117,6 +117,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							</SidebarMenu>
 						</SidebarGroupContent>
 					</SidebarGroup>
+					<NavMain items={data.navMain} />
 				</SidebarContent>
 
 				<SidebarFooter>

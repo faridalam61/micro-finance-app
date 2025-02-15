@@ -314,7 +314,7 @@ export default function LedgerBook() {
 						</TableHeader>
 					</table>
 				</div>
-				<ScrollArea className="h-[59vh]">
+				<ScrollArea className="h-[63vh]">
 					<div className="w-full">
 						<table className="w-full caption-bottom text-sm">
 							<TableBody>

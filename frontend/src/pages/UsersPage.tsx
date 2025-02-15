@@ -155,7 +155,7 @@ export default function UsersPage() {
 				);
 			},
 			cell: ({ row }) => (
-				<div className="capitalize">{row.getValue("role")}</div>
+				<div className="capitalize ml-0 md:ml-4">{row.getValue("role")}</div>
 			),
 		},
 		{
@@ -173,7 +173,7 @@ export default function UsersPage() {
 			},
 			cell: ({ row }) => (
 				<div
-					className={`capitalize ${
+					className={`capitalize ml-0 md:ml-4 ${
 						row.getValue("status") === "active"
 							? "text-green-600"
 							: "text-red-600"
@@ -196,7 +196,9 @@ export default function UsersPage() {
 					</Button>
 				);
 			},
-			cell: ({ row }) => <div>{row.getValue("joinDate")}</div>,
+			cell: ({ row }) => (
+				<div className="ml-0 md:ml-4">{row.getValue("joinDate")}</div>
+			),
 		},
 		{
 			id: "actions",
@@ -290,7 +292,7 @@ export default function UsersPage() {
 	};
 
 	return (
-		<div className="w-full">
+		<div className="w-full p-4">
 			<div className="flex items-center py-4">
 				<Input
 					placeholder="Filter names..."

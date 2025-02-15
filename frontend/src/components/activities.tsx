@@ -131,7 +131,7 @@ const ActivityDescription = ({ item }: { item: ActivityItem }) => {
 
 export default function ActivityComponent() {
 	return (
-		<>
+		<div className="p-4">
 			{activityData.map((item, index) => (
 				<div key={item.id}>
 					<div className="flex items-start space-x-4 py-4">
@@ -162,6 +162,6 @@ export default function ActivityComponent() {
 					{index < activityData.length - 1 && <Separator />}
 				</div>
 			))}
-		</>
+		</div>
 	);
 }
