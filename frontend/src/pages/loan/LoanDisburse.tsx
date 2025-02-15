@@ -1,8 +1,7 @@
+import { DisburseLoanForm } from "../../components/disburse-loan-form";
 
 const LoanDisburse = () => {
-  return (
-    <div>LoanDisburse</div>
-  )
-}
+	return <DisburseLoanForm />;
+};
 
-export default LoanDisburse
+export default LoanDisburse;

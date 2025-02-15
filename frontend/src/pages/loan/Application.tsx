@@ -1,8 +1,7 @@
+import { ApplicationForm } from "../../components/loan-application-form";
 
 const LoanApplication = () => {
-  return (
-    <div>Application</div>
-  )
-}
+	return <ApplicationForm />;
+};
 
-export default LoanApplication
+export default LoanApplication;

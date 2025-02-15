@@ -1,4 +1,4 @@
-import LedgerBook from "../components/ledger-book";
+import LedgerBook from "../components/ledger/ledger-book";
 
 const LedgerPage = () => {
 	return <LedgerBook />;

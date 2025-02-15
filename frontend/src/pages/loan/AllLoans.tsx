@@ -1,8 +1,7 @@
+import LoanTakersList from "../../components/loan-takers-list";
 
 const AllLoans = () => {
-  return (
-    <div>AllLoans</div>
-  )
-}
+	return <LoanTakersList />;
+};
 
-export default AllLoans
+export default AllLoans;

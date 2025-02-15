@@ -80,6 +80,7 @@ const data = {
 
 const data2 = {
 	nav: [
+		{ name: "Dashboard", url: "/dashboard", icon: Bell },
 		{ name: "Cash in/out", url: "/dashboard/cash-in-or-out", icon: Bell },
 		{ name: "Ledger", url: "/dashboard/ledger", icon: Menu },
 		{ name: "Activities", url: "/dashboard/activities", icon: Home },

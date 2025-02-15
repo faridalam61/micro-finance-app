@@ -23,16 +23,24 @@ import {
 	CommandInput,
 	CommandItem,
 } from "../components/ui/command";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "../components/ui/alert-dialog";
 import { useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 
-// Define validation schema
 const formSchema = z.object({
 	option: z.string().min(1, { message: "Please select an option." }),
 	amount: z.coerce.number().min(1, { message: "Amount must be at least 1." }),
 });
 
-// Define form values type
 type FormValues = z.infer<typeof formSchema>;
 
 const options = [
@@ -51,15 +59,22 @@ const CollectInstallmentForm = () => {
 	});
 
 	const [open, setOpen] = useState(false);
+	const [confirmOpen, setConfirmOpen] = useState(false);
 
-	function onSubmit(values: FormValues) {
+	const onSubmit = (values: FormValues) => {
 		console.log("Submitted Data:", values);
-	}
+		setConfirmOpen(false);
+	};
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-				{/* ComboBox Field */}
+			<form
+				onSubmit={(e) => {
+					e.preventDefault();
+					setConfirmOpen(true);
+				}}
+				className="space-y-4"
+			>
 				<FormField
 					control={form.control}
 					name="option"
@@ -107,8 +122,6 @@ const CollectInstallmentForm = () => {
 						</FormItem>
 					)}
 				/>
-
-				{/* Number Field */}
 				<FormField
 					control={form.control}
 					name="amount"
@@ -127,11 +140,26 @@ const CollectInstallmentForm = () => {
 						</FormItem>
 					)}
 				/>
-
 				<Button type="submit" className="w-full">
 					Submit
 				</Button>
 			</form>
+			<AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Confirm Submission</AlertDialogTitle>
+						<AlertDialogDescription>
+							Are you sure you want to submit this form?
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogAction onClick={form.handleSubmit(onSubmit)}>
+							Confirm
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</Form>
 	);
 };
