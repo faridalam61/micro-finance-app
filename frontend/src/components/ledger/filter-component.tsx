@@ -7,14 +7,6 @@ import {
 	SelectValue,
 } from "../../components/ui/select";
 import { Button } from "../../components/ui/button";
-// import { Calendar } from "../../components/ui/calendar";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "../../components/ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
 import { DateRange } from "./types";
 
 interface FilterComponentsProps {
@@ -28,7 +20,7 @@ export const FilterComponents: React.FC<FilterComponentsProps> = ({
 	onDateRangeChange,
 	onReset,
 }) => {
-	const [date, setDate] = React.useState<DateRange>({
+	const [_date, setDate] = React.useState<DateRange>({
 		from: undefined,
 		to: undefined,
 	});
@@ -75,49 +67,11 @@ export const FilterComponents: React.FC<FilterComponentsProps> = ({
 				</SelectContent>
 			</Select>
 
-			<Popover>
-				<PopoverTrigger asChild>
-					<Button
-						variant="outline"
-						className="w-[280px] justify-start text-left font-normal"
-					>
-						<CalendarIcon className="mr-2 h-4 w-4" />
-						{date.from ? (
-							date.to ? (
-								<>
-									{format(date.from, "LLL dd, y")} -{" "}
-									{format(date.to, "LLL dd, y")}
-								</>
-							) : (
-								format(date.from, "LLL dd, y")
-							)
-						) : (
-							<span>Pick a date range</span>
-						)}
-					</Button>
-				</PopoverTrigger>
-				<PopoverContent className="w-auto p-0" align="start">
-					{/* <Calendar
-						initialFocus
-						mode="range"
-						defaultMonth={date.from}
-						selected={date}
-						onSelect={(newDate) => {
-							setDate(newDate || { from: undefined, to: undefined });
-							onDateRangeChange(newDate || { from: undefined, to: undefined });
-						}}
-						numberOfMonths={2}
-					/> */}
-				</PopoverContent>
-			</Popover>
-
+			<Button onClick={onReset}>All</Button>
 			<Button onClick={() => handleDateRangeSelect("today")}>Today</Button>
 			<Button onClick={() => handleDateRangeSelect("week")}>This Week</Button>
 			<Button onClick={() => handleDateRangeSelect("month")}>This Month</Button>
 			<Button onClick={() => handleDateRangeSelect("year")}>This Year</Button>
-			<Button onClick={onReset} variant="outline">
-				All Entries
-			</Button>
 		</div>
 	);
 };

@@ -1,4 +1,4 @@
-import { Outlet } from "react-router";
+import { Link, Outlet, useLocation } from "react-router";
 import { AppSidebar } from "../components/dashboard/app-sidebar";
 import { ModeToggle } from "../components/mode-toggler";
 import {
@@ -18,6 +18,8 @@ import {
 import { ScrollArea } from "../components/ui/scroll-area";
 
 export default function DefaultLayout() {
+	const location = useLocation();
+	const pathnames = location.pathname.split("/").filter((x) => x);
 	return (
 		<SidebarProvider>
 			<AppSidebar />
@@ -29,15 +31,42 @@ export default function DefaultLayout() {
 							<Separator orientation="vertical" className="mr-2 h-4" />
 							<Breadcrumb>
 								<BreadcrumbList>
-									<BreadcrumbItem className="hidden md:block">
-										<BreadcrumbLink href="#">
-											Building Your Application
+									{/* Home or Dashboard Link */}
+									{/* <BreadcrumbItem className="hidden md:block">
+										<BreadcrumbLink asChild>
+											<Link to="/">Dashboard</Link>
 										</BreadcrumbLink>
-									</BreadcrumbItem>
-									<BreadcrumbSeparator className="hidden md:block" />
-									<BreadcrumbItem>
-										<BreadcrumbPage>Data Fetching</BreadcrumbPage>
-									</BreadcrumbItem>
+									</BreadcrumbItem> */}
+
+									{/* Separator after Home */}
+									{/* {pathnames.length > 0 && (
+										<BreadcrumbSeparator className="hidden md:block" />
+									)} */}
+
+									{/* Dynamic Breadcrumb Items */}
+									{pathnames.map((value, index) => {
+										const to = `/${pathnames.slice(0, index + 1).join("/")}`;
+										const isLast = index === pathnames.length - 1;
+
+										return (
+											<BreadcrumbItem key={to}>
+												{isLast ? (
+													<BreadcrumbPage>
+														{value.charAt(0).toUpperCase() + value.slice(1)}
+													</BreadcrumbPage>
+												) : (
+													<>
+														<BreadcrumbLink asChild>
+															<Link to={to}>
+																{value.charAt(0).toUpperCase() + value.slice(1)}
+															</Link>
+														</BreadcrumbLink>
+														<BreadcrumbSeparator />
+													</>
+												)}
+											</BreadcrumbItem>
+										);
+									})}
 								</BreadcrumbList>
 							</Breadcrumb>
 						</div>
@@ -51,7 +80,7 @@ export default function DefaultLayout() {
 						<div className="aspect-video rounded-xl bg-muted/50" />
 					</div> */}
 					{/* <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min p-6 items-center justify-center"> */}
-					<ScrollArea className="h-[90vh] w-full p- md:p-6">
+					<ScrollArea className="h-[92vh] w-full  overflow-hidden">
 						<Outlet />
 					</ScrollArea>
 				</div>

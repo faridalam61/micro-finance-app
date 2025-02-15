@@ -27,6 +27,190 @@ const initialTransactions: Transaction[] = [
 	},
 	{
 		id: 2,
+		date: "2023-06-01",
+		description: "Initial Balance",
+		debit: 0,
+		credit: 1000,
+		type: "cash in",
+	},
+	{
+		id: 3,
+		date: "2023-06-01",
+		description: "Initial Balance",
+		debit: 0,
+		credit: 1000,
+		type: "cash in",
+	},
+	{
+		id: 4,
+		date: "2023-06-01",
+		description: "Initial Balance",
+		debit: 0,
+		credit: 1000,
+		type: "cash in",
+	},
+	{
+		id: 5,
+		date: "2023-06-01",
+		description: "Initial Balance",
+		debit: 0,
+		credit: 1000,
+		type: "cash in",
+	},
+	{
+		id: 6,
+		date: "2023-06-01",
+		description: "Initial Balance",
+		debit: 0,
+		credit: 1000,
+		type: "cash in",
+	},
+	{
+		id: 7,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 8,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 9,
+		date: "2025-01-02",
+		description: "Grocery Shopping",
+		debit: 0,
+		credit: 2000,
+		type: "expense",
+	},
+	{
+		id: 10,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 11,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 12,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 13,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 14,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 15,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 16,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 17,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 18,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 19,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 20,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 21,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 22,
+		date: "2023-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 23,
+		date: "2025-01-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 24,
+		date: "2025-06-02",
+		description: "Grocery Shopping",
+		debit: 150,
+		credit: 0,
+		type: "expense",
+	},
+	{
+		id: 25,
 		date: "2023-06-02",
 		description: "Grocery Shopping",
 		debit: 150,
@@ -96,6 +280,13 @@ export default function LedgerBook() {
 		<div className="p-4">
 			<div className="flex justify-between mb-4">
 				<NewEntryForm onSubmit={handleNewEntry} />
+			</div>
+			<div className="flex justify-between">
+				<FilterComponents
+					onTypeChange={setSelectedType}
+					onDateRangeChange={setDateRange}
+					onReset={resetFilters}
+				/>
 				<div>
 					<Button
 						onClick={() => exportToCSV(filteredTransactions)}
@@ -103,17 +294,11 @@ export default function LedgerBook() {
 					>
 						Export CSV
 					</Button>
-					<Button onClick={() => exportToPDF(filteredTransactions)}>
+					<Button onClick={() => exportToPDF(filteredTransactions, balance)}>
 						Export PDF
 					</Button>
 				</div>
 			</div>
-
-			<FilterComponents
-				onTypeChange={setSelectedType}
-				onDateRangeChange={setDateRange}
-				onReset={resetFilters}
-			/>
 
 			<div className="rounded-md border">
 				<div className="w-full">
@@ -129,7 +314,7 @@ export default function LedgerBook() {
 						</TableHeader>
 					</table>
 				</div>
-				<ScrollArea className="h-[60vh]">
+				<ScrollArea className="h-[59vh]">
 					<div className="w-full">
 						<table className="w-full caption-bottom text-sm">
 							<TableBody>
