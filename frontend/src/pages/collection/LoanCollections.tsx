@@ -43,6 +43,69 @@ const fetchInstallments = async (): Promise<Installment[]> => {
 					description: "Fifth payment",
 					amount: 850,
 				},
+				{
+					id: "5",
+					date: "2023-07-01",
+					name: "Charlie Davis",
+					description: "Fifth payment",
+					amount: 850,
+				},
+				{
+					id: "5",
+					date: "2023-07-01",
+					name: "Charlie Davis",
+					description: "Fifth payment",
+					amount: 850,
+				},
+				{
+					id: "5",
+					date: "2023-07-01",
+					name: "Charlie Davis",
+					description: "Fifth payment",
+					amount: 850,
+				},
+				{
+					id: "5",
+					date: "2023-07-01",
+					name: "Charlie Davis",
+					description: "Fifth payment",
+					amount: 850,
+				},
+				{
+					id: "5",
+					date: "2023-07-01",
+					name: "Charlie Davis",
+					description: "Fifth payment",
+					amount: 850,
+				},
+				{
+					id: "5",
+					date: "2023-07-01",
+					name: "Charlie Davis",
+					description: "Fifth payment",
+					amount: 850,
+				},
+				{
+					id: "5",
+					date: "2023-07-01",
+					name: "Charlie Davis",
+					description: "Fifth payment",
+					amount: 850,
+				},
+				{
+					id: "5",
+					date: "2023-07-01",
+					name: "Charlie Davis",
+					description: "Fifth payment",
+					amount: 850,
+				},
+				{
+					id: "5",
+					date: "2023-07-01",
+					name: "Charlie Davis",
+					description: "Fifth payment",
+					amount: 850,
+				},
 			]);
 		}, 500); // Simulate network delay
 	});
@@ -64,8 +127,8 @@ export default function LoanCollections() {
 	}, []);
 
 	return (
-		<div className="container mx-auto py-10">
-			<h1 className="text-3xl font-bold mb-8">Installment Collection</h1>
+		<div className="container mx-auto py-5">
+			<h1 className="text-3xl px-4 font-bold mb-8">Installment Collection</h1>
 			{isLoading ? (
 				<p>Loading installments...</p>
 			) : (

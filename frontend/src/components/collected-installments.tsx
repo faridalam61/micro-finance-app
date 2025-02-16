@@ -25,6 +25,7 @@ import {
 } from "../components/ui/popover";
 import type { Installment } from "./types";
 import { format } from "date-fns";
+import { ScrollArea } from "./ui/scroll-area";
 
 interface InstallmentTableProps {
 	installments: Installment[];
@@ -42,7 +43,7 @@ export function InstallmentTable({ installments }: InstallmentTableProps) {
 	const columns = useMemo<ColumnDef<Installment>[]>(
 		() => [
 			{ accessorKey: "date", header: "Date" },
-			{ accessorKey: "name", header: "Name" },
+			{ accessorKey: "name", header: "Customer Name" },
 			{ accessorKey: "description", header: "Description" },
 			{
 				accessorKey: "amount",
@@ -95,67 +96,71 @@ export function InstallmentTable({ installments }: InstallmentTableProps) {
 	);
 
 	return (
-		<div>
-			<div className="flex items-center space-x-4 mb-4">
-				<Button
-					variant={filterType === "all" ? "default" : "outline"}
-					onClick={() => {
-						setFilterType("all");
-						table.setGlobalFilter(undefined);
-					}}
-				>
-					All
-				</Button>
-				<Button
-					variant={filterType === "day" ? "default" : "outline"}
-					onClick={() => {
-						setFilterType("day");
-						table.setGlobalFilter("day");
-					}}
-				>
-					Today
-				</Button>
-				<Button
-					variant={filterType === "week" ? "default" : "outline"}
-					onClick={() => {
-						setFilterType("week");
-						table.setGlobalFilter("week");
-					}}
-				>
-					This Week
-				</Button>
-				<Button
-					variant={filterType === "month" ? "default" : "outline"}
-					onClick={() => {
-						setFilterType("month");
-						table.setGlobalFilter("month");
-					}}
-				>
-					This Month
-				</Button>
-				<Popover>
-					<PopoverTrigger asChild>
-						<Button variant={filterType === "custom" ? "default" : "outline"}>
-							Custom Range
-						</Button>
-					</PopoverTrigger>
-					<PopoverContent className="w-auto p-0" align="start">
-						<Calendar
-							mode="range"
-							selected={{
-								from: customStartDate,
-								to: customEndDate,
-							}}
-							onSelect={(range) => {
-								setCustomStartDate(range?.from);
-								setCustomEndDate(range?.to);
-								setFilterType("custom");
-								table.setGlobalFilter("custom");
-							}}
-							numberOfMonths={2}
-						/>
-					</PopoverContent>
-				</Popover>
+		<div className="p-4">
+			<div className="flex items-center justify-between mb-5">
+				<div className="flex items-center space-x-4">
+					<Button
+						variant={filterType === "all" ? "default" : "outline"}
+						onClick={() => {
+							setFilterType("all");
+							table.setGlobalFilter(undefined);
+						}}
+					>
+						All
+					</Button>
+					<Button
+						variant={filterType === "day" ? "default" : "outline"}
+						onClick={() => {
+							setFilterType("day");
+							table.setGlobalFilter("day");
+						}}
+					>
+						Today
+					</Button>
+					<Button
+						variant={filterType === "week" ? "default" : "outline"}
+						onClick={() => {
+							setFilterType("week");
+							table.setGlobalFilter("week");
+						}}
+					>
+						This Week
+					</Button>
+					<Button
+						variant={filterType === "month" ? "default" : "outline"}
+						onClick={() => {
+							setFilterType("month");
+							table.setGlobalFilter("month");
+						}}
+					>
+						This Month
+					</Button>
+					<Popover>
+						<PopoverTrigger asChild>
+							<Button variant={filterType === "custom" ? "default" : "outline"}>
+								Custom Range
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent className="w-auto p-0" align="start">
+							<Calendar
+								mode="range"
+								selected={{
+									from: customStartDate,
+									to: customEndDate,
+								}}
+								onSelect={(range) => {
+									setCustomStartDate(range?.from);
+									setCustomEndDate(range?.to);
+									setFilterType("custom");
+									table.setGlobalFilter("custom");
+								}}
+								numberOfMonths={2}
+							/>
+						</PopoverContent>
+					</Popover>
+				</div>
+
+				<Button>Collect Installment</Button>
 			</div>
 			{filterType === "custom" && customStartDate && customEndDate && (
 				<div className="mb-4">
@@ -179,18 +184,23 @@ export function InstallmentTable({ installments }: InstallmentTableProps) {
 						</TableRow>
 					))}
 				</TableHeader>
-				<TableBody>
-					{filteredRows.map((row) => (
-						<TableRow key={row.id}>
-							{row.getVisibleCells().map((cell) => (
-								<TableCell key={cell.id}>
-									{flexRender(cell.column.columnDef.cell, cell.getContext())}
-								</TableCell>
-							))}
-						</TableRow>
-					))}
-				</TableBody>
 			</Table>
+			<ScrollArea className="h-[56vh]">
+				<Table>
+					<TableBody>
+						{filteredRows.map((row) => (
+							<TableRow key={row.id}>
+								{row.getVisibleCells().map((cell) => (
+									<TableCell key={cell.id}>
+										{flexRender(cell.column.columnDef.cell, cell.getContext())}
+									</TableCell>
+								))}
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</ScrollArea>
+
 			<div className="mt-4 text-right">
 				<strong>Total: ${total.toFixed(2)}</strong>
 			</div>

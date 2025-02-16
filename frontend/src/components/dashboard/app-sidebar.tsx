@@ -2,7 +2,6 @@ import { Link } from "react-router";
 
 import {
 	Bell,
-	Bot,
 	GalleryVerticalEnd,
 	Home,
 	Menu,
@@ -55,25 +54,6 @@ const data = {
 					title: "Application",
 					url: "/dashboard/application",
 				},
-				{
-					title: "Disburse",
-					url: "/dashboard/disburse",
-				},
-			],
-		},
-		{
-			title: "Collection",
-			url: "#",
-			icon: Bot,
-			items: [
-				{
-					title: "Collections",
-					url: "/dashboard/collections",
-				},
-				{
-					title: "Collect Installment",
-					url: "/dashboard/collect-loan",
-				},
 			],
 		},
 	],
@@ -85,6 +65,7 @@ const data2 = {
 		{ name: "Ledger", url: "/dashboard/ledger", icon: Menu },
 		{ name: "Activities", url: "/dashboard/activities", icon: Home },
 		{ name: "Users", url: "/dashboard/users", icon: Home },
+		{ name: "Collections", url: "/dashboard/collections", icon: Home },
 	],
 };
 

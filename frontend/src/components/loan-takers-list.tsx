@@ -11,16 +11,10 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, Edit, Trash2, Ban, CheckCircle } from "lucide-react";
+import { ArrowUpDown, Ban, CheckCircle, Eye } from "lucide-react";
 
 import { Button } from "../components/ui/button";
 import { Checkbox } from "../components/ui/checkbox";
-import {
-	DropdownMenu,
-	DropdownMenuCheckboxItem,
-	DropdownMenuContent,
-	DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
 import { Input } from "../components/ui/input";
 import {
 	Table,
@@ -38,64 +32,44 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "../components/ui/dialog";
-import { Label } from "../components/ui/label";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "../components/ui/select";
 
-interface User {
+interface LoanTakers {
 	id: string;
+	disburseDate: string;
 	name: string;
 	phone: string;
-	role: string;
-	status: "active" | "blocked";
-	joinDate: string;
+	loanAmount: number;
+	remainingAmount: number;
+	status: "paid" | "pending" | "on hold";
 }
 
-const data: User[] = [
+const data: LoanTakers[] = [
 	{
 		id: "1",
-		name: "John Doe",
+		disburseDate: "2023-01-15",
+		name: "John Doe John",
 		phone: "(555) 123-4567",
-		role: "Admin",
-		status: "active",
-		joinDate: "2023-01-15",
+		loanAmount: 10000,
+		remainingAmount: 0,
+		status: "paid",
 	},
 	{
 		id: "2",
-		name: "Jane Smith",
-		phone: "(555) 987-6543",
-		role: "User",
-		status: "active",
-		joinDate: "2023-02-20",
+		disburseDate: "2023-01-15",
+		name: "John Doe",
+		phone: "(555) 123-4567",
+		loanAmount: 10000,
+		remainingAmount: 5000,
+		status: "pending",
 	},
 	{
 		id: "3",
-		name: "Bob Johnson",
-		phone: "(555) 246-8135",
-		role: "Manager",
-		status: "blocked",
-		joinDate: "2023-03-10",
-	},
-	{
-		id: "4",
-		name: "Alice Brown",
-		phone: "(555) 369-8520",
-		role: "User",
-		status: "active",
-		joinDate: "2023-04-05",
-	},
-	{
-		id: "5",
-		name: "Charlie Davis",
-		phone: "(555) 741-9630",
-		role: "Admin",
-		status: "active",
-		joinDate: "2023-05-12",
+		disburseDate: "2023-01-15",
+		name: "John Doe",
+		phone: "(555) 123-4567",
+		loanAmount: 10000,
+		remainingAmount: 3000,
+		status: "on hold",
 	},
 ];
 
@@ -104,12 +78,13 @@ export default function LoanTakersList() {
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [rowSelection, setRowSelection] = useState({});
-	const [users, setUsers] = useState<User[]>(data);
+	const [users, setUsers] = useState<LoanTakers[]>(data);
 
-	const [editUser, setEditUser] = useState<User | null>(null);
-	const [deleteUser, setDeleteUser] = useState<User | null>(null);
+	const [editUser, setEditUser] = useState<LoanTakers | null>(null);
+	const [deleteUser, setDeleteUser] = useState<LoanTakers | null>(null);
 
-	const columns: ColumnDef<User>[] = [
+	const columns: ColumnDef<LoanTakers>[] = [
+		// Select id
 		{
 			id: "select",
 			header: ({ table }) => (
@@ -129,6 +104,28 @@ export default function LoanTakersList() {
 			enableSorting: false,
 			enableHiding: false,
 		},
+
+		// Disburse date
+
+		{
+			accessorKey: "disburseDate",
+			header: ({ column }) => {
+				return (
+					<Button
+						variant="ghost"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+					>
+						Disburse Date
+						<ArrowUpDown className="ml-2 h-4 w-4" />
+					</Button>
+				);
+			},
+			cell: ({ row }) => (
+				<div className="ml-4">{row.getValue("disburseDate")}</div>
+			),
+		},
+
+		// Name
 		{
 			accessorKey: "name",
 			header: "Name",
@@ -136,28 +133,54 @@ export default function LoanTakersList() {
 				<div className="capitalize">{row.getValue("name")}</div>
 			),
 		},
+
+		// Phone
 		{
 			accessorKey: "phone",
 			header: "Phone",
 			cell: ({ row }) => <div>{row.getValue("phone")}</div>,
 		},
+
+		// Loan amount
 		{
-			accessorKey: "role",
+			accessorKey: "loanAmount",
 			header: ({ column }) => {
 				return (
 					<Button
 						variant="ghost"
 						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 					>
-						Role
+						Loan Amount
 						<ArrowUpDown className="ml-2 h-4 w-4" />
 					</Button>
 				);
 			},
 			cell: ({ row }) => (
-				<div className="capitalize">{row.getValue("role")}</div>
+				<div className="capitalize ml-4">{row.getValue("loanAmount")}</div>
 			),
 		},
+
+		// Remaining amount
+
+		{
+			accessorKey: "remainingAmount",
+			header: ({ column }) => {
+				return (
+					<Button
+						variant="ghost"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+					>
+						Remaining
+						<ArrowUpDown className="ml-2 h-4 w-4" />
+					</Button>
+				);
+			},
+			cell: ({ row }) => (
+				<div className="capitalize ml-4">{row.getValue("remainingAmount")}</div>
+			),
+		},
+
+		// Loan status
 		{
 			accessorKey: "status",
 			header: ({ column }) => {
@@ -173,7 +196,7 @@ export default function LoanTakersList() {
 			},
 			cell: ({ row }) => (
 				<div
-					className={`capitalize ${
+					className={`capitalize ml-4 ${
 						row.getValue("status") === "active"
 							? "text-green-600"
 							: "text-red-600"
@@ -183,21 +206,8 @@ export default function LoanTakersList() {
 				</div>
 			),
 		},
-		{
-			accessorKey: "joinDate",
-			header: ({ column }) => {
-				return (
-					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-					>
-						Join Date
-						<ArrowUpDown className="ml-2 h-4 w-4" />
-					</Button>
-				);
-			},
-			cell: ({ row }) => <div>{row.getValue("joinDate")}</div>,
-		},
+
+		// Actions
 		{
 			id: "actions",
 			enableHiding: false,
@@ -212,23 +222,16 @@ export default function LoanTakersList() {
 							size="icon"
 							onClick={() => setEditUser(user)}
 						>
-							<Edit />
+							<Eye />
 						</Button>
-						{/* Delete button */}
-						<Button
-							variant="outline"
-							size="icon"
-							onClick={() => setDeleteUser(user)}
-						>
-							<Trash2 />
-						</Button>
-						{/* block unblock */}
+
+						{/* Not collection able or collectionable */}
 						<Button
 							variant="outline"
 							size="icon"
 							onClick={() => handleBlockUnblock(user)}
 						>
-							{user.status === "active" ? (
+							{user.status === "pending" || user.status === "on hold" ? (
 								<>
 									<Ban />
 								</>
@@ -263,17 +266,17 @@ export default function LoanTakersList() {
 		},
 	});
 
-	const handleBlockUnblock = (user: User) => {
+	const handleBlockUnblock = (user: LoanTakers) => {
 		setUsers((prevUsers) =>
 			prevUsers.map((u) =>
 				u.id === user.id
-					? { ...u, status: u.status === "active" ? "blocked" : "active" }
+					? { ...u, status: u.status === "pending" ? "on hold" : "pending" }
 					: u
 			)
 		);
 	};
 
-	const handleSaveEdit = (editedUser: User) => {
+	const handleSaveEdit = (editedUser: LoanTakers) => {
 		setUsers((prevUsers) =>
 			prevUsers.map((user) => (user.id === editedUser.id ? editedUser : user))
 		);
@@ -290,7 +293,7 @@ export default function LoanTakersList() {
 	};
 
 	return (
-		<div className="w-full">
+		<div className="w-full p-4">
 			<div className="flex items-center py-4">
 				<Input
 					placeholder="Filter names..."
@@ -300,32 +303,9 @@ export default function LoanTakersList() {
 					}
 					className="max-w-sm"
 				/>
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="outline" className="ml-auto">
-							Columns
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						{table
-							.getAllColumns()
-							.filter((column) => column.getCanHide())
-							.map((column) => {
-								return (
-									<DropdownMenuCheckboxItem
-										key={column.id}
-										className="capitalize"
-										checked={column.getIsVisible()}
-										onCheckedChange={(value) =>
-											column.toggleVisibility(!!value)
-										}
-									>
-										{column.id}
-									</DropdownMenuCheckboxItem>
-								);
-							})}
-					</DropdownMenuContent>
-				</DropdownMenu>
+				<Button variant="outline" className="ml-auto">
+					Disburse Loan
+				</Button>
 			</div>
 			<div className="rounded-md border">
 				<Table>
@@ -417,16 +397,18 @@ export default function LoanTakersList() {
 	);
 }
 
+// View loan details modal
+
 const EditUserDialog = ({
 	user,
 	onClose,
 	onSave,
 }: {
-	user: User | null;
+	user: LoanTakers | null;
 	onClose: () => void;
-	onSave: (user: User) => void;
+	onSave: (user: LoanTakers) => void;
 }) => {
-	const [editedUser, setEditedUser] = useState<User | null>(user);
+	const [editedUser, _setEditedUser] = useState<LoanTakers | null>(user);
 
 	if (!editedUser) return null;
 
@@ -439,89 +421,9 @@ const EditUserDialog = ({
 		<Dialog open={!!user} onOpenChange={onClose}>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>Edit User</DialogTitle>
+					<DialogTitle>View Details</DialogTitle>
 				</DialogHeader>
-				<div className="grid gap-4 py-4">
-					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="name" className="text-right">
-							Name
-						</Label>
-						<Input
-							id="name"
-							value={editedUser.name}
-							onChange={(e) =>
-								setEditedUser({ ...editedUser, name: e.target.value })
-							}
-							className="col-span-3"
-						/>
-					</div>
-					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="phone" className="text-right">
-							Phone
-						</Label>
-						<Input
-							id="phone"
-							value={editedUser.phone}
-							onChange={(e) =>
-								setEditedUser({ ...editedUser, phone: e.target.value })
-							}
-							className="col-span-3"
-						/>
-					</div>
-					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="role" className="text-right">
-							Role
-						</Label>
-						<Select
-							value={editedUser.role}
-							onValueChange={(value) =>
-								setEditedUser({ ...editedUser, role: value })
-							}
-						>
-							<SelectTrigger className="col-span-3">
-								<SelectValue placeholder="Select a role" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="Admin">Admin</SelectItem>
-								<SelectItem value="User">User</SelectItem>
-								<SelectItem value="Manager">Manager</SelectItem>
-							</SelectContent>
-						</Select>
-					</div>
-					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="status" className="text-right">
-							Status
-						</Label>
-						<Select
-							value={editedUser.status}
-							onValueChange={(value: "active" | "blocked") =>
-								setEditedUser({ ...editedUser, status: value })
-							}
-						>
-							<SelectTrigger className="col-span-3">
-								<SelectValue placeholder="Select a status" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="active">Active</SelectItem>
-								<SelectItem value="blocked">Blocked</SelectItem>
-							</SelectContent>
-						</Select>
-					</div>
-					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="joinDate" className="text-right">
-							Join Date
-						</Label>
-						<Input
-							id="joinDate"
-							type="date"
-							value={editedUser.joinDate}
-							onChange={(e) =>
-								setEditedUser({ ...editedUser, joinDate: e.target.value })
-							}
-							className="col-span-3"
-						/>
-					</div>
-				</div>
+				<h2>Pending</h2>
 				<DialogFooter>
 					<Button type="submit" onClick={handleSave}>
 						Save changes
@@ -532,6 +434,7 @@ const EditUserDialog = ({
 	);
 };
 
+// Loan not collectionable confirmation
 const ConfirmationDialog = ({
 	isOpen,
 	onClose,

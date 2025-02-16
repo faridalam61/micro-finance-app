@@ -4,7 +4,6 @@ import Dashboard from "./pages/Dashboard";
 import { ThemeProvider } from "./components/theme-provider";
 import LoginPage from "./pages/LoginPage";
 import AllLoans from "./pages/loan/AllLoans";
-import LoanDisburse from "./pages/loan/LoanDisburse";
 import LoanApplication from "./pages/loan/Application";
 import LoanCollections from "./pages/collection/LoanCollections";
 import CollectLoan from "./pages/collection/CollectLoan";
@@ -26,7 +25,6 @@ function App() {
 					{/* Loan routes */}
 					<Route path="/dashboard/loans" element={<AllLoans />} />
 					<Route path="/dashboard/application" element={<LoanApplication />} />
-					<Route path="/dashboard/disburse" element={<LoanDisburse />} />
 
 					{/* Collection routes */}
 					<Route path="/dashboard/collections" element={<LoanCollections />} />
