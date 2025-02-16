@@ -14,9 +14,13 @@ export const exportToCSV = (transactions: Transaction[]) => {
 };
 export const exportToPDF = (transactions: Transaction[], balance: number) => {
 	const doc = new jsPDF();
-
+	const time = new Date().toLocaleString();
+	const pageWidth = doc.internal.pageSize.getWidth();
+	const textWidth = doc.getTextWidth(time); // Get text width
+	const x = (pageWidth - textWidth) / 2;
 	// Title
-	doc.text("Transaction Report", 14, 10);
+	doc.text("Transaction Report", x, 10);
+	doc.text(time, x, 20);
 
 	// Calculate totals
 	const totalDebit = transactions.reduce((sum, t) => sum + t.debit, 0);
@@ -24,7 +28,7 @@ export const exportToPDF = (transactions: Transaction[], balance: number) => {
 
 	// Generate table
 	autoTable(doc, {
-		startY: 20,
+		startY: 25,
 		head: [["Date", "Description", "Type", "Debit", "Credit"]],
 		body: [
 			...transactions.map((t) => [
