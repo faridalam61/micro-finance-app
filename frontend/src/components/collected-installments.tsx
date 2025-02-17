@@ -26,6 +26,15 @@ import {
 import type { Installment } from "./types";
 import { format } from "date-fns";
 import { ScrollArea } from "./ui/scroll-area";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "./ui/dialog";
+import CollectInstallmentForm from "./collect-installment";
 
 interface InstallmentTableProps {
 	installments: Installment[];
@@ -160,7 +169,23 @@ export function InstallmentTable({ installments }: InstallmentTableProps) {
 					</Popover>
 				</div>
 
-				<Button>Collect Installment</Button>
+				{/* Collect installment form */}
+				<Dialog>
+					<DialogTrigger asChild>
+						<Button variant="outline">Collect Installment</Button>
+					</DialogTrigger>
+					<DialogContent className="sm:max-w-[425px]">
+						<DialogHeader>
+							<DialogTitle>Edit profile</DialogTitle>
+							<DialogDescription>
+								Make changes to your profile here. Click save when you're done.
+							</DialogDescription>
+						</DialogHeader>
+						<div className="grid gap-4 py-4">
+							<CollectInstallmentForm />
+						</div>
+					</DialogContent>
+				</Dialog>
 			</div>
 			{filterType === "custom" && customStartDate && customEndDate && (
 				<div className="mb-4">

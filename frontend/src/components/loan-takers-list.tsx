@@ -31,7 +31,9 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
+	DialogTrigger,
 } from "../components/ui/dialog";
+import { DisburseLoanForm } from "./disburse-loan-form";
 
 interface LoanTakers {
 	id: string;
@@ -294,7 +296,7 @@ export default function LoanTakersList() {
 
 	return (
 		<div className="w-full p-4">
-			<div className="flex items-center py-4">
+			<div className="flex items-center justify-between py-4">
 				<Input
 					placeholder="Filter names..."
 					value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -303,9 +305,23 @@ export default function LoanTakersList() {
 					}
 					className="max-w-sm"
 				/>
-				<Button variant="outline" className="ml-auto">
-					Disburse Loan
-				</Button>
+				{/* Disburse loan trigger */}
+				<Dialog>
+					<DialogTrigger asChild>
+						<Button variant="outline">Disburse Loan</Button>
+					</DialogTrigger>
+					<DialogContent className="sm:max-w-[425px]">
+						<DialogHeader>
+							<DialogTitle>Edit profile</DialogTitle>
+							<DialogDescription>
+								Make changes to your profile here. Click save when you're done.
+							</DialogDescription>
+						</DialogHeader>
+						<div className="grid gap-4 py-4">
+							<DisburseLoanForm />
+						</div>
+					</DialogContent>
+				</Dialog>
 			</div>
 			<div className="rounded-md border">
 				<Table>

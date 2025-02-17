@@ -15,12 +15,7 @@ import { ArrowUpDown, Edit, Trash2, Ban, CheckCircle } from "lucide-react";
 
 import { Button } from "../components/ui/button";
 import { Checkbox } from "../components/ui/checkbox";
-import {
-	DropdownMenu,
-	DropdownMenuCheckboxItem,
-	DropdownMenuContent,
-	DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
+
 import { Input } from "../components/ui/input";
 import {
 	Table,
@@ -37,6 +32,7 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
+	DialogTrigger,
 } from "../components/ui/dialog";
 import { Label } from "../components/ui/label";
 import {
@@ -46,7 +42,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../components/ui/select";
-import { NewUserForm } from "../components/add-new-user-form";
+import { UserRegistrationForm } from "../components/create-new-user-form";
 
 interface User {
 	id: string;
@@ -291,22 +287,9 @@ export default function UsersPage() {
 			setDeleteUser(null);
 		}
 	};
-// const handleNewEntry = (newTransaction: Omit<Transaction, "id">) => {
-// 		const transactionWithId = {
-// 			...newTransaction,
-// 			id: transactions.length + 1,
-// 		};
-// 		setTransactions([...transactions, transactionWithId]);
-// 		console.log("New transaction added:", transactionWithId);
-// 	};
-
-const handleNewEntry = ()=>{
-	console.log('hello')
-}
-
 	return (
 		<div className="w-full p-4">
-			<div className="flex items-center py-4">
+			<div className="flex items-center justify-between py-4">
 				<Input
 					placeholder="Filter names..."
 					value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -315,33 +298,20 @@ const handleNewEntry = ()=>{
 					}
 					className="max-w-sm"
 				/>
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						{/* <Button variant="outline" className="ml-auto">
-							Columns
-						</Button> */}
-						<NewUserForm onSubmit={handleNewEntry} />
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						{table
-							.getAllColumns()
-							.filter((column) => column.getCanHide())
-							.map((column) => {
-								return (
-									<DropdownMenuCheckboxItem
-										key={column.id}
-										className="capitalize"
-										checked={column.getIsVisible()}
-										onCheckedChange={(value) =>
-											column.toggleVisibility(!!value)
-										}
-									>
-										{column.id}
-									</DropdownMenuCheckboxItem>
-								);
-							})}
-					</DropdownMenuContent>
-				</DropdownMenu>
+				{/* Add new user dialog */}
+				<Dialog>
+					<DialogTrigger asChild>
+						<Button variant="outline">Create user</Button>
+					</DialogTrigger>
+					<DialogContent className="sm:max-w-[425px]">
+						<DialogHeader>
+							<DialogTitle>Register new user</DialogTitle>
+						</DialogHeader>
+						<div className="grid gap-4 py-4">
+							<UserRegistrationForm />
+						</div>
+					</DialogContent>
+				</Dialog>
 			</div>
 			<div className="rounded-md border">
 				<Table>
