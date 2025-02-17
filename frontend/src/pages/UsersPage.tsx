@@ -46,6 +46,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../components/ui/select";
+import { NewUserForm } from "../components/add-new-user-form";
 
 interface User {
 	id: string;
@@ -290,6 +291,18 @@ export default function UsersPage() {
 			setDeleteUser(null);
 		}
 	};
+// const handleNewEntry = (newTransaction: Omit<Transaction, "id">) => {
+// 		const transactionWithId = {
+// 			...newTransaction,
+// 			id: transactions.length + 1,
+// 		};
+// 		setTransactions([...transactions, transactionWithId]);
+// 		console.log("New transaction added:", transactionWithId);
+// 	};
+
+const handleNewEntry = ()=>{
+	console.log('hello')
+}
 
 	return (
 		<div className="w-full p-4">
@@ -304,9 +317,10 @@ export default function UsersPage() {
 				/>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button variant="outline" className="ml-auto">
+						{/* <Button variant="outline" className="ml-auto">
 							Columns
-						</Button>
+						</Button> */}
+						<NewUserForm onSubmit={handleNewEntry} />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
 						{table
