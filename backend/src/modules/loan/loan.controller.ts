@@ -3,7 +3,6 @@ import { OK } from "../../utils/httpStatusCode";
 import sendResponse from "../../utils/sendResponse";
 import { loanServices } from "./loan.service";
 
-
 // Create loan
 const createLoan = catchAsync(async (req, res) => {
 	const payload = req.body;

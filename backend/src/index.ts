@@ -6,6 +6,7 @@ import { globalErrorHandler } from "./middleware/globalErrorHandler";
 import { userRoutes } from "./modules/user/user.route";
 import { loanRoutes } from "./modules/loan/loan.route";
 import { ledgerRoutes } from "./modules/ledger/ledger.route";
+import { customerRouter } from "./modules/customer/customer.route";
 
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -17,13 +18,16 @@ app.get("/", (req, res) => {
 });
 
 // user routes
-app.use("/api/v1/user", userRoutes)
+app.use("/api/v1/user", userRoutes);
 
 // Loan routes
-app.use("/api/v1/loan", loanRoutes)
+app.use("/api/v1/loan", loanRoutes);
 
 // Ledger routes
-app.use("/api/v1/ledger", ledgerRoutes)
+app.use("/api/v1/ledger", ledgerRoutes);
+
+// customer router
+app.use("/api/v1/customer", customerRouter);
 
 // Not found route
 app.use("*", notFound);

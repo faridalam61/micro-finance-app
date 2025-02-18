@@ -13,10 +13,7 @@ const getAllLedgerEntryFromDB = async () => {
 	return result;
 };
 
-
-
 export const ledgerServices = {
 	createLedgerEntryIntoDB,
 	getAllLedgerEntryFromDB,
-	
 };

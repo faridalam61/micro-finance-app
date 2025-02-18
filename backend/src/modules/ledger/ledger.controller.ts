@@ -3,7 +3,6 @@ import { OK } from "../../utils/httpStatusCode";
 import sendResponse from "../../utils/sendResponse";
 import { ledgerServices } from "./ledger.service";
 
-
 // Create ledger entry
 const createLedgerEntry = catchAsync(async (req, res) => {
 	const payload = req.body;
@@ -30,9 +29,7 @@ const getAllLedgerEntry = catchAsync(async (req, res) => {
 	});
 });
 
-
 export const ledgerController = {
 	createLedgerEntry,
 	getAllLedgerEntry,
-	
 };
