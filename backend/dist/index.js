@@ -30,6 +30,8 @@ app.use("/api/v1/ledger", ledger_route_1.ledgerRoutes);
 app.use("/api/v1/customer", customer_route_1.customerRouter);
 // activity routes
 app.use("/api/v1/activity", activity_route_1.activityRoutes);
+// Collection routes
+app.use("/api/v1/collection");
 // Not found route
 app.use("*", notFound_1.notFound);
 // Global error handler

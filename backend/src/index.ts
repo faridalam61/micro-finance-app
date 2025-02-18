@@ -33,6 +33,9 @@ app.use("/api/v1/customer", customerRouter);
 // activity routes
 app.use("/api/v1/activity", activityRoutes);
 
+// Collection routes
+app.use("/api/v1/collection");
+
 // Not found route
 app.use("*", notFound);
 
