@@ -7,6 +7,7 @@ import { userRoutes } from "./modules/user/user.route";
 import { loanRoutes } from "./modules/loan/loan.route";
 import { ledgerRoutes } from "./modules/ledger/ledger.route";
 import { customerRouter } from "./modules/customer/customer.route";
+import { activityRoutes } from "./modules/activity/activity.route";
 
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -26,8 +27,11 @@ app.use("/api/v1/loan", loanRoutes);
 // Ledger routes
 app.use("/api/v1/ledger", ledgerRoutes);
 
-// customer router
+// customer routes
 app.use("/api/v1/customer", customerRouter);
+
+// activity routes
+app.use("/api/v1/activity", activityRoutes);
 
 // Not found route
 app.use("*", notFound);
