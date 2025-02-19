@@ -81,7 +81,9 @@ export function InstallmentTable({ installments }: InstallmentTableProps) {
 			case "month":
 				return rowDate >= oneMonthAgo && rowDate <= today;
 			case "custom":
+				// eslint-disable-next-line no-case-declarations
 				const start = customStartDate || new Date(0);
+				// eslint-disable-next-line no-case-declarations
 				const end = customEndDate || new Date();
 				return rowDate >= start && rowDate <= end;
 			default:

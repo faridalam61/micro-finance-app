@@ -424,7 +424,7 @@ const EditUserDialog = ({
 	onClose: () => void;
 	onSave: (user: LoanTakers) => void;
 }) => {
-	const [editedUser, _setEditedUser] = useState<LoanTakers | null>(user);
+	const [editedUser] = useState<LoanTakers | null>(user);
 
 	if (!editedUser) return null;
 

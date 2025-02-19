@@ -20,7 +20,7 @@ export const FilterComponents: React.FC<FilterComponentsProps> = ({
 	onDateRangeChange,
 	onReset,
 }) => {
-	const [_date, setDate] = React.useState<DateRange>({
+	const [, setDate] = React.useState<DateRange>({
 		from: undefined,
 		to: undefined,
 	});

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+
 import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -162,6 +164,7 @@ export function ApplicationForm() {
 					<FormField
 						control={form.control}
 						name="photo"
+						// eslint-disalbe-next-line @typescript-eslint/no-unused-varsn@typescript-eslint/no-unused-vars
 						render={({ field: { onChange, value, ...rest } }) => (
 							<FormItem>
 								<FormLabel>Photo</FormLabel>

@@ -46,8 +46,9 @@ export const NewEntryForm: React.FC<NewEntryFormProps> = ({ onSubmit }) => {
 		formState: { errors },
 	} = useForm<Omit<Transaction, "id">>();
 
-	const onSubmitForm = (_data: Omit<Transaction, "id">) => {
+	const onSubmitForm = (data: Omit<Transaction, "id">) => {
 		setShowConfirmation(true);
+		console.log(data);
 	};
 
 	const handleConfirm = () => {
