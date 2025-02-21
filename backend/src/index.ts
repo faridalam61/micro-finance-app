@@ -10,10 +10,17 @@ import { customerRouter } from "./modules/customer/customer.route";
 import { activityRoutes } from "./modules/activity/activity.route";
 import { authRoutes } from "./modules/auth/auth.route";
 import { collectionRoutes } from "./modules/collection/collection.route";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 
 dotenv.config();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
 
 // Test routes
 app.get("/", (req, res) => {
@@ -40,6 +47,7 @@ app.use("/api/v1/collection", collectionRoutes);
 
 // auth routes
 app.use("/api/v1/auth", authRoutes);
+
 // Not found route
 app.use("*", notFound);
 
