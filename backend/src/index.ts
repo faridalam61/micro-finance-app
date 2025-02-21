@@ -8,6 +8,8 @@ import { loanRoutes } from "./modules/loan/loan.route";
 import { ledgerRoutes } from "./modules/ledger/ledger.route";
 import { customerRouter } from "./modules/customer/customer.route";
 import { activityRoutes } from "./modules/activity/activity.route";
+import { authRoutes } from "./modules/auth/auth.route";
+import { collectionRoutes } from "./modules/collection/collection.route";
 
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -34,8 +36,10 @@ app.use("/api/v1/customer", customerRouter);
 app.use("/api/v1/activity", activityRoutes);
 
 // Collection routes
-app.use("/api/v1/collection");
+app.use("/api/v1/collection", collectionRoutes);
 
+// auth routes
+app.use("/api/v1/auth", authRoutes);
 // Not found route
 app.use("*", notFound);
 

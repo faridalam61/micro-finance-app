@@ -26,7 +26,7 @@ const login = async (payload: TLogin) => {
 
 	// generate access token
 	const accessToken = jwt.sign(
-		{ userId: user.id, phone: user.phone },
+		{ userId: user.id, phone: user.phone, role: user.role },
 		process.env.JWT_ACCESS_SECRET as string,
 		{ expiresIn: process.env.JWT_ACCESS_EXPIRE }
 	);
@@ -34,7 +34,7 @@ const login = async (payload: TLogin) => {
 	// Generate refress token
 
 	const refreshToken = jwt.sign(
-		{ userId: user.id, phone: user.phone },
+		{ userId: user.id, phone: user.phone, role: user.role },
 		process.env.JWT_REFRESH_SECRET as string,
 		{
 			expiresIn: process.env.JWT_REFRESH_EXPIRE,
@@ -46,9 +46,9 @@ const login = async (payload: TLogin) => {
 };
 
 // change password by admin
-const changePasswordByAdmin = async (id: string, password: string) => {
-	const hashedPassword = await bcrypt.hash(password, 10);
-	await User.findByIdAndUpdate(id, { password: hashedPassword });
+const changePasswordByAdmin = async (payload: any) => {
+	const hashedPassword = await bcrypt.hash(payload.password, 10);
+	await User.findByIdAndUpdate(payload.id, { password: hashedPassword });
 };
 
 // change password by user
@@ -87,8 +87,49 @@ const changePasswordByUser = async (
 	await User.findByIdAndUpdate(userData.id, { password: hashedPassword });
 };
 
-// refresh token
-const refreshToken = async () => {};
+/**
+ * this function will recieve a token. @type String
+ * validate the token
+ * extract user from the token
+ * check if the user is available on database
+ * check user current status
+ * if everyting is right gernerate a new access token and return it
+ */
+const refreshToken = async (token: string) => {
+	// decode token using jwt
+	const decoded = (await jwt.verify(
+		token,
+		process.env.JWT_REFRESH_SECRET as string
+	)) as JwtPayload;
+	const { userId } = decoded;
+
+	if (!decoded) {
+		throw new Error("Invlaid token");
+	}
+
+	// check if user exist
+	const user = await User.findById(userId);
+	if (!user) {
+		throw new Error("Invalid token");
+	}
+
+	// check user status
+
+	const status = user.status;
+
+	if (status === "blocked") {
+		throw new Error("User is blocked");
+	}
+
+	// generate access token
+	const accessToken = await jwt.sign(
+		{ userId: user.id, role: user.role, phone: user.phone },
+		process.env.JWT_ACCESS_SECRET as string,
+		{ expiresIn: "1d" }
+	);
+	// return token
+	return { accessToken };
+};
 
 // logout user
 const logout = async () => {};
