@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import { dbConnection } from "./db/config";
 import { notFound } from "./middleware/notFound";
-import { globalErrorHandler } from "./middleware/globalErrorHandler";
 import { userRoutes } from "./modules/user/user.route";
 import { loanRoutes } from "./modules/loan/loan.route";
 import { ledgerRoutes } from "./modules/ledger/ledger.route";
@@ -12,6 +11,7 @@ import { authRoutes } from "./modules/auth/auth.route";
 import { collectionRoutes } from "./modules/collection/collection.route";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import globalErrorHandler from "./middleware/globalErrorHandler";
 
 dotenv.config();
 const port = process.env.PORT || 5001;
