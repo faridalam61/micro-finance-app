@@ -66,20 +66,20 @@ const refreshToken = catchAsync(async (req, res) => {
 });
 
 // get user
-const getUser = catchAsync(async (req, res) => {});
-// logout
-
-const logOut = catchAsync(async (req, res) => {
+const getUser = catchAsync(async (req, res) => {
 	const userId = req.body.userId;
 	const result = await authServices.getUser(userId);
 
-	sendResponse(res,{
-		statusCode:OK,
+	sendResponse(res, {
+		statusCode: OK,
 		success: true,
-		message:"User info retrived",
-		data: result
-	})
+		message: "User info retrived",
+		data: result,
+	});
 });
+// logout
+
+const logOut = catchAsync(async (req, res) => {});
 
 export const authControllers = {
 	loginUser,
