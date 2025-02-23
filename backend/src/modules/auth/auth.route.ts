@@ -2,6 +2,7 @@ import express from "express";
 import { validateRequest } from "../../utils/validateRequest";
 import { authValidation } from "./auth.validation";
 import { authControllers } from "./auth.controller";
+import auth from "../../middleware/auth";
 /**
  * Auth route prefix
  * api/v1/auth
@@ -16,4 +17,5 @@ router.post(
 	authControllers.loginUser
 );
 
+router.get("/", auth("admin","user"), authControllers.getUser)
 export const authRoutes = router;

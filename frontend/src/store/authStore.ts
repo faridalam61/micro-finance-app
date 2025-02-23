@@ -15,8 +15,9 @@ interface AuthState {
 	isCheckingAuth: boolean;
 	isAuthenticated: boolean;
 	login: (credentials: { phone: string; password: string }) => Promise<void>;
+	checkAuth: () => Promise<void>;
 }
-
+const API_URL = 'http://localhost:5001/api/v1'
 export const useAuth = create<AuthState>((set) => ({
 	user: null,
 	isLoading: false,
@@ -25,11 +26,10 @@ export const useAuth = create<AuthState>((set) => ({
 	isCheckingAuth: false,
 	isAuthenticated: false,
 	login: async (credentials) => {
-		console.log("from store:", credentials);
-		set({ isLoading: true, error: null, success: null }); // Reset success message on login attempt
+		set({ isLoading: true, error: null, success: null }); 
 		try {
 			const res = await axios.post<User>(
-				"http://localhost:5001/api/v1/auth",
+				`${API_URL}/auth`,
 				credentials,
 				{
 					withCredentials: true,
@@ -58,9 +58,24 @@ export const useAuth = create<AuthState>((set) => ({
 	checkAuth: async () => {
 		set({ isCheckingAuth: true });
 		try {
-			const res = await axios.get<User>(`http://localhost:5001/auth`);
-		} catch (err) {
-			set({ error: err.message, isAuthenticated: false });
+			const res = await axios.get<User>(`${API_URL}/auth`);
+			set({user: res.data, isAuthenticated: true, isCheckingAuth: false})
+		} 
+			catch (err) {
+			console.log(err);
+			if (axios.isAxiosError(err)) {
+				set({
+					error: err.response?.data?.message || "An error occurred",
+					isCheckingAuth: false,
+					isAuthenticated: false
+				});
+			} else {
+				set({
+					error: "An error occurred",
+					isCheckingAuth: false,
+					isAuthenticated: false
+				});
+			}
 		}
 	},
 }));
