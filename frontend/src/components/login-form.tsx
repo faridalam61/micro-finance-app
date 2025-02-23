@@ -1,90 +1,102 @@
-import { LucideMessageCircle, LucidePhoneCall } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "./ui/form";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
+	CardFooter,
 	CardHeader,
-	CardTitle,
-} from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { cn } from "../lib/utils";
+} from "./ui/card";
+import { useAuth } from "../store/authStore";
+import { Loader } from "lucide-react";
 
-export function LoginForm({
-	className,
-	...props
-}: React.ComponentPropsWithoutRef<"div">) {
-	const currentYear = new Date().getFullYear();
+const formSchema = z.object({
+	phone: z.string().min(1, "Phone number is required"),
+	password: z.string().min(1, "Enter your password"),
+});
+
+export function LoginForm() {
+	const { login, isLoading, error, success } = useAuth();
+
+	// 1. Define your form.
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			phone: "",
+			password: "",
+		},
+	});
+
+	async function onSubmit(values: z.infer<typeof formSchema>) {
+		await login(values);
+		console.log(values);
+	}
+
 	return (
-		<div className={cn("flex flex-col gap-6", className)} {...props}>
-			<Card>
-				<CardHeader className="text-center">
-					<CardTitle className="text-xl">Welcome back</CardTitle>
-					<CardDescription>
-						Login with your Apple or Google account
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<form>
-						<div className="grid gap-6">
-							<div className="grid gap-6">
-								<div className="grid gap-2">
-									<Label htmlFor="email">Email</Label>
-									<Input
-										id="email"
-										type="email"
-										placeholder="m@example.com"
-										required
-									/>
-								</div>
-								<div className="grid gap-2">
-									<div className="flex items-center">
-										<Label htmlFor="password">Password</Label>
-										{/* <a
-											href="#"
-											className="ml-auto text-sm underline-offset-4 hover:underline"
-										>
-											Forgot your password?
-										</a> */}
-									</div>
-									<Input id="password" type="password" required />
-								</div>
-								<Button type="submit" className="w-full">
-									Login
-								</Button>
-							</div>
-							<div className="text-center text-sm">
-								Contact support if you have any login issues
-								<div className="flex items-center justify-center pt-1">
-									<Button
-										variant="ghost"
-										size="icon"
-										onClick={() =>
-											window.open("https://wa.me/+8801955206804", "_blank")
-										}
-									>
-										<LucideMessageCircle />
-									</Button>
+		<Card>
+			<CardHeader className="text-center">
+				<h2 className="text-2xl">Log In</h2>
+				<CardDescription>Enter your credentials to login</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+						<FormField
+							control={form.control}
+							name="phone"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Phone number</FormLabel>
+									<FormControl>
+										<Input placeholder="Enter phone number" {...field} />
+									</FormControl>
 
-									<Button
-										variant="ghost"
-										size="icon"
-										onClick={() => (window.location.href = "tel:+1234567890")}
-									>
-										<LucidePhoneCall />
-									</Button>
-								</div>
-							</div>
-						</div>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="password"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Password</FormLabel>
+									<FormControl>
+										<Input
+											placeholder="Enter your password"
+											type="password"
+											{...field}
+										/>
+									</FormControl>
+
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						{error && <p className="text-red-600">{error}</p>}
+						{success && <p className="text-green-600">{success}</p>}
+						<Button type="submit" className="w-full" disabled={isLoading}>
+							{isLoading ? <Loader /> : "Login"}
+						</Button>
 					</form>
-				</CardContent>
-			</Card>
-			<div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
-				Microfinance management system. &copy; {currentYear} All rights
-				reserved. <br />
-				Developed by <a href="https://farid-alam.com/">Farid Alam</a>
-			</div>
-		</div>
+				</Form>
+			</CardContent>
+			<CardFooter>
+				<p className="text-xs text-center">
+					Microfinance system. Developed and maintained by Farid Alam
+				</p>
+			</CardFooter>
+		</Card>
 	);
 }

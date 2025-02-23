@@ -15,7 +15,7 @@ const loginUser = catchAsync(async (req, res) => {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
 	});
-
+	console.log(accessToken, refreshToken);
 	sendResponse(res, {
 		statusCode: OK,
 		success: true,
