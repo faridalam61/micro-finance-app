@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from "react-router";
+import { Link, Navigate, Outlet, useLocation } from "react-router";
 import { AppSidebar } from "../components/dashboard/app-sidebar";
 import { ModeToggle } from "../components/mode-toggler";
 import {
@@ -16,11 +16,18 @@ import {
 	SidebarTrigger,
 } from "../components/ui/sidebar";
 import { ScrollArea } from "../components/ui/scroll-area";
+import { useAppSelector } from "../redux/feature/hooks";
+import { useCurrentToken } from "../redux/feature/auth/authSlice";
 
 export default function DefaultLayout() {
 	const location = useLocation();
 	const pathnames = location.pathname.split("/").filter((x) => x);
 
+	const token = useAppSelector(useCurrentToken);
+
+	if (!token) {
+		return <Navigate to="/login" replace={true} />;
+	}
 	return (
 		<SidebarProvider>
 			<AppSidebar />

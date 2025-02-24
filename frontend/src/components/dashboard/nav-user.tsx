@@ -27,6 +27,9 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "../../components/ui/sidebar";
+import { useAppDispatch } from "../../redux/feature/hooks";
+import { logOut } from "../../redux/feature/auth/authSlice";
+import { toast } from "sonner";
 
 export function NavUser({
 	user,
@@ -38,7 +41,11 @@ export function NavUser({
 	};
 }) {
 	const { isMobile } = useSidebar();
-
+	const dispatch = useAppDispatch();
+	const handleLogOut = () => {
+		dispatch(logOut());
+		toast.warning("Logged out successfully");
+	};
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
@@ -100,7 +107,7 @@ export function NavUser({
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem>
+						<DropdownMenuItem onClick={handleLogOut}>
 							<LogOut />
 							Log out
 						</DropdownMenuItem>

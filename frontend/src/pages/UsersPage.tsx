@@ -43,70 +43,23 @@ import {
 	SelectValue,
 } from "../components/ui/select";
 import { UserRegistrationForm } from "../components/create-new-user-form";
-
-interface User {
-	id: string;
-	name: string;
-	phone: string;
-	role: string;
-	status: "active" | "blocked";
-	joinDate: string;
-}
-
-const data: User[] = [
-	{
-		id: "1",
-		name: "John Doe",
-		phone: "(555) 123-4567",
-		role: "Admin",
-		status: "active",
-		joinDate: "2023-01-15",
-	},
-	{
-		id: "2",
-		name: "Jane Smith",
-		phone: "(555) 987-6543",
-		role: "User",
-		status: "active",
-		joinDate: "2023-02-20",
-	},
-	{
-		id: "3",
-		name: "Bob Johnson",
-		phone: "(555) 246-8135",
-		role: "Manager",
-		status: "blocked",
-		joinDate: "2023-03-10",
-	},
-	{
-		id: "4",
-		name: "Alice Brown",
-		phone: "(555) 369-8520",
-		role: "User",
-		status: "active",
-		joinDate: "2023-04-05",
-	},
-	{
-		id: "5",
-		name: "Charlie Davis",
-		phone: "(555) 741-9630",
-		role: "Admin",
-		status: "active",
-		joinDate: "2023-05-12",
-	},
-];
+import { TUser, useGetAllUsersQuery } from "../redux/feature/user/userApi";
 
 export default function UsersPage() {
+	const { data, isLoading } = useGetAllUsersQuery(undefined);
+	if (isLoading) {
+		return "Loading..";
+	}
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [rowSelection, setRowSelection] = useState({});
-	const [users, setUsers] = useState<User[]>(data);
+	const [users, setUsers] = useState<TUser[]>(data ?? []);
 
-	const [editUser, setEditUser] = useState<User | null>(null);
-	const [deleteUser, setDeleteUser] = useState<User | null>(null);
+	const [editUser, setEditUser] = useState<TUser | null>(null);
+	const [deleteUser, setDeleteUser] = useState<TUser | null>(null);
 
-	const columns: ColumnDef<User>[] = [
+	const columns: ColumnDef<TUser>[] = [
 		{
 			id: "select",
 			header: ({ table }) => (
@@ -262,7 +215,7 @@ export default function UsersPage() {
 		},
 	});
 
-	const handleBlockUnblock = (user: User) => {
+	const handleBlockUnblock = (user: TUser) => {
 		setUsers((prevUsers) =>
 			prevUsers.map((u) =>
 				u.id === user.id
@@ -272,7 +225,7 @@ export default function UsersPage() {
 		);
 	};
 
-	const handleSaveEdit = (editedUser: User) => {
+	const handleSaveEdit = (editedUser: TUser) => {
 		setUsers((prevUsers) =>
 			prevUsers.map((user) => (user.id === editedUser.id ? editedUser : user))
 		);
@@ -408,11 +361,11 @@ const EditUserDialog = ({
 	onClose,
 	onSave,
 }: {
-	user: User | null;
+	user: TUser | null;
 	onClose: () => void;
-	onSave: (user: User) => void;
+	onSave: (user: TUser) => void;
 }) => {
-	const [editedUser, setEditedUser] = useState<User | null>(user);
+	const [editedUser, setEditedUser] = useState<TUser | null>(user);
 
 	if (!editedUser) return null;
 
@@ -500,9 +453,9 @@ const EditUserDialog = ({
 						<Input
 							id="joinDate"
 							type="date"
-							value={editedUser.joinDate}
+							value={editedUser.createdAt}
 							onChange={(e) =>
-								setEditedUser({ ...editedUser, joinDate: e.target.value })
+								setEditedUser({ ...editedUser, createdAt: e.target.value })
 							}
 							className="col-span-3"
 						/>

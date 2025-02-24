@@ -20,9 +20,15 @@ import {
 } from "./ui/card";
 import { Loader } from "lucide-react";
 import { useLoginMutation } from "../redux/feature/auth/authApi";
-import { useAppDispatch } from "../redux/feature/hooks";
-import { setUser } from "../redux/feature/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "../redux/feature/hooks";
+import {
+	setUser,
+	TUser,
+	useCurrentToken,
+} from "../redux/feature/auth/authSlice";
 import { verifyToken } from "../utils/verifyToken";
+import { Navigate } from "react-router";
+import { toast } from "sonner";
 
 const formSchema = z.object({
 	phone: z.string().min(1, "Phone number is required"),
@@ -31,8 +37,7 @@ const formSchema = z.object({
 
 export function LoginForm() {
 	const dispatch = useAppDispatch();
-	const [login, { error, isLoading }] = useLoginMutation();
-
+	const [login, { isLoading }] = useLoginMutation();
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -43,10 +48,20 @@ export function LoginForm() {
 	});
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		const res = await login(values).unwrap();
-		console.log(res);
-		const user = verifyToken(res.data.accessToken);
-		dispatch(setUser({ user, token: res.data.accessToken }));
+		const toastId = toast.loading("logging in...");
+		try {
+			const res = await login(values).unwrap();
+			const user = verifyToken(res.data.accessToken) as TUser;
+			dispatch(setUser({ user, token: res.data.accessToken }));
+			toast.success("Login successful", { id: toastId });
+		} catch (err) {
+			toast.error("Something went wrong", { id: toastId });
+		}
+	}
+
+	const token = useAppSelector(useCurrentToken);
+	if (token) {
+		return <Navigate to="/dashboard" replace={true} />;
 	}
 	return (
 		<Card>
@@ -89,8 +104,7 @@ export function LoginForm() {
 								</FormItem>
 							)}
 						/>
-						{/* {error && <p className="text-red-600">{error}</p>} */}
-						{/* {success && <p className="text-green-600">{success}</p>} */}
+
 						<Button type="submit" className="w-full" disabled={isLoading}>
 							{isLoading ? <Loader /> : "Login"}
 						</Button>
