@@ -21,6 +21,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../components/ui/select";
+import { useCreateUserMutation } from "../redux/feature/user/userApi";
+import { toast } from "sonner";
 
 const formSchema = z.object({
 	name: z.string().min(2, {
@@ -30,26 +32,36 @@ const formSchema = z.object({
 		message: "Please enter a valid phone number.",
 	}),
 	role: z.enum(["user", "admin", "manager"]),
-	status: z.enum(["active", "inactive"]),
 	password: z.string().min(8, {
 		message: "Password must be at least 8 characters.",
 	}),
 });
 
-export function UserRegistrationForm() {
+export function UserRegistrationForm({ onSuccess }: { onSuccess: () => void }) {
+	const [createUser, { isLoading }] = useCreateUserMutation();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: "",
 			phone: "",
 			role: "user",
-			status: "active",
 			password: "",
 		},
 	});
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values);
+	async function onSubmit(values: z.infer<typeof formSchema>) {
+		try {
+			const res = await createUser(values);
+
+			if (res.error) {
+				toast.error("Failed to create user");
+			} else {
+				onSuccess();
+				toast.success("User created successfully!");
+			}
+		} catch (err) {
+			toast.error("Something went wrong!");
+		}
 	}
 
 	return (
@@ -103,27 +115,7 @@ export function UserRegistrationForm() {
 						</FormItem>
 					)}
 				/>
-				<FormField
-					control={form.control}
-					name="status"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Status</FormLabel>
-							<Select onValueChange={field.onChange} defaultValue={field.value}>
-								<FormControl>
-									<SelectTrigger>
-										<SelectValue placeholder="Select a status" />
-									</SelectTrigger>
-								</FormControl>
-								<SelectContent>
-									<SelectItem value="active">Active</SelectItem>
-									<SelectItem value="inactive">Inactive</SelectItem>
-								</SelectContent>
-							</Select>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
+
 				<FormField
 					control={form.control}
 					name="password"
@@ -141,7 +133,7 @@ export function UserRegistrationForm() {
 					)}
 				/>
 				<Button type="submit" className="w-full">
-					Create User
+					{isLoading ? "Creating..." : "Create User"}
 				</Button>
 			</form>
 		</Form>

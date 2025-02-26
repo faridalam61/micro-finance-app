@@ -2,6 +2,7 @@ import express from "express";
 import { validateRequest } from "../../utils/validateRequest";
 import { userValidationSchema } from "./user.validation";
 import { userController } from "./user.controller";
+import auth from "../../middleware/auth";
 const router = express.Router();
 
 // api end point prefix: api/v1/user
@@ -14,7 +15,7 @@ router.post(
 );
 
 // get all user
-router.get("/", userController.getAllUsers);
+router.get("/", auth("admin", "user"), userController.getAllUsers);
 
 // get user by id
 router.get("/:id", userController.getUserById);

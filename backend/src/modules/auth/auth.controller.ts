@@ -54,7 +54,7 @@ const changePassByUser = catchAsync(async (req, res) => {
 
 // refresh token
 const refreshToken = catchAsync(async (req, res) => {
-	const refreshToken = req.cookies;
+	const { refreshToken } = req.cookies;
 	const result = await authServices.refreshToken(refreshToken);
 
 	sendResponse(res, {

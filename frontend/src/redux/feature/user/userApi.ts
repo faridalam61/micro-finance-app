@@ -1,6 +1,6 @@
 import { baseApi } from "../../api/baseApi";
 export type TUser = {
-	id: string;
+	_id: string;
 	name: string;
 	phone: string;
 	password: string;
@@ -18,7 +18,34 @@ const userApi = baseApi.injectEndpoints({
 				method: "GET",
 			}),
 		}),
+
+		createUser: builder.mutation({
+			query: (data) => ({
+				url: "/user",
+				method: "post",
+				body: data,
+			}),
+		}),
+
+		deleteUser: builder.mutation({
+			query: (id) => ({
+				url: `/user/${id}`,
+				method: "DELETE",
+			}),
+		}),
+		updateUser: builder.mutation({
+			query: ({ id, payload }) => ({
+				url: `/user/${id}`,
+				method: "PATCH",
+				body: payload,
+			}),
+		}),
 	}),
 });
 
-export const { useGetAllUsersQuery } = userApi;
+export const {
+	useGetAllUsersQuery,
+	useCreateUserMutation,
+	useDeleteUserMutation,
+	useUpdateUserMutation,
+} = userApi;

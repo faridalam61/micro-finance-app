@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	type ColumnDef,
 	type ColumnFiltersState,
@@ -43,13 +43,18 @@ import {
 	SelectValue,
 } from "../components/ui/select";
 import { UserRegistrationForm } from "../components/create-new-user-form";
-import { TUser, useGetAllUsersQuery } from "../redux/feature/user/userApi";
+import {
+	TUser,
+	useDeleteUserMutation,
+	useGetAllUsersQuery,
+	useUpdateUserMutation,
+} from "../redux/feature/user/userApi";
+import { toast } from "sonner";
 
 export default function UsersPage() {
-	const { data, isLoading } = useGetAllUsersQuery(undefined);
-	if (isLoading) {
-		return "Loading..";
-	}
+	const { data, isLoading, refetch } = useGetAllUsersQuery(undefined);
+	const [deleteUsers] = useDeleteUserMutation();
+	const [updateUser] = useUpdateUserMutation();
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -58,6 +63,7 @@ export default function UsersPage() {
 
 	const [editUser, setEditUser] = useState<TUser | null>(null);
 	const [deleteUser, setDeleteUser] = useState<TUser | null>(null);
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
 
 	const columns: ColumnDef<TUser>[] = [
 		{
@@ -134,7 +140,7 @@ export default function UsersPage() {
 			),
 		},
 		{
-			accessorKey: "joinDate",
+			accessorKey: "createdAt",
 			header: ({ column }) => {
 				return (
 					<Button
@@ -147,7 +153,7 @@ export default function UsersPage() {
 				);
 			},
 			cell: ({ row }) => (
-				<div className="ml-0 md:ml-4">{row.getValue("joinDate")}</div>
+				<div className="ml-0 md:ml-4">{row.getValue("createdAt")}</div>
 			),
 		},
 		{
@@ -178,7 +184,7 @@ export default function UsersPage() {
 						<Button
 							variant="outline"
 							size="icon"
-							onClick={() => handleBlockUnblock(user)}
+							onClick={() => handleBlockUnblock(user._id, user.status)}
 						>
 							{user.status === "active" ? (
 								<>
@@ -195,7 +201,11 @@ export default function UsersPage() {
 			},
 		},
 	];
-
+	useEffect(() => {
+		if (data) {
+			setUsers(data.data);
+		}
+	}, [data]);
 	const table = useReactTable({
 		data: users,
 		columns,
@@ -215,32 +225,63 @@ export default function UsersPage() {
 		},
 	});
 
-	const handleBlockUnblock = (user: TUser) => {
-		setUsers((prevUsers) =>
-			prevUsers.map((u) =>
-				u.id === user.id
-					? { ...u, status: u.status === "active" ? "blocked" : "active" }
-					: u
-			)
-		);
+	const handleBlockUnblock = async (id: string, currentStatus: string) => {
+		try {
+			// Determine the new status based on the current status
+			const newStatus = currentStatus === "active" ? "blocked" : "active";
+			const data = { status: newStatus };
+
+			// Call the updateUser mutation
+			const res = await updateUser({
+				id,
+				payload: data,
+			}).unwrap();
+
+			console.log(id, data);
+			if (res.error) {
+				toast.error(
+					`Unable to ${newStatus === "blocked" ? "block" : "unblock"} user`
+				);
+			} else {
+				toast.success(
+					`User ${
+						newStatus === "blocked" ? "blocked" : "unblocked"
+					} successfully`
+				);
+				refetch(); // Refresh the user list
+			}
+		} catch (err) {
+			toast.error(
+				`Unable to ${currentStatus === "active" ? "block" : "unblock"} user`
+			);
+		}
 	};
 
 	const handleSaveEdit = (editedUser: TUser) => {
 		setUsers((prevUsers) =>
-			prevUsers.map((user) => (user.id === editedUser.id ? editedUser : user))
+			prevUsers.map((user) => (user._id === editedUser._id ? editedUser : user))
 		);
 		setEditUser(null);
 	};
 
-	const handleConfirmDelete = () => {
+	const handleConfirmDelete = async (id: string) => {
 		if (deleteUser) {
-			setUsers((prevUsers) =>
-				prevUsers.filter((user) => user.id !== deleteUser.id)
-			);
-			setDeleteUser(null);
+			const res = await deleteUsers(id);
+			if (res.error) {
+				toast.error("Failed to delete user");
+			} else {
+				setDeleteUser(null);
+				refetch();
+				toast.success("User deleted successfully");
+			}
 		}
 	};
-	return (
+	const handleUserCreated = () => {
+		refetch();
+	};
+	return isLoading ? (
+		<div>Loading...</div>
+	) : (
 		<div className="w-full p-4">
 			<div className="flex items-center justify-between py-4">
 				<Input
@@ -252,7 +293,7 @@ export default function UsersPage() {
 					className="max-w-sm"
 				/>
 				{/* Add new user dialog */}
-				<Dialog>
+				<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 					<DialogTrigger asChild>
 						<Button variant="outline">Create user</Button>
 					</DialogTrigger>
@@ -261,7 +302,12 @@ export default function UsersPage() {
 							<DialogTitle>Register new user</DialogTitle>
 						</DialogHeader>
 						<div className="grid gap-4 py-4">
-							<UserRegistrationForm />
+							<UserRegistrationForm
+								onSuccess={() => {
+									handleUserCreated(); // Refresh data
+									setIsDialogOpen(false); // Close the dialog
+								}}
+							/>
 						</div>
 					</DialogContent>
 				</Dialog>
@@ -348,9 +394,14 @@ export default function UsersPage() {
 			<ConfirmationDialog
 				isOpen={!!deleteUser}
 				onClose={() => setDeleteUser(null)}
-				onConfirm={handleConfirmDelete}
+				onConfirm={() => handleConfirmDelete(deleteUser?._id as string)}
 				title="Confirm Delete"
-				description={`Are you sure you want to delete ${deleteUser?.name}?`}
+				description={
+					<span>
+						Are you sure you want to delete{" "}
+						<strong style={{ color: "red" }}>{deleteUser?.name}</strong>?
+					</span>
+				}
 			/>
 		</div>
 	);
@@ -421,9 +472,8 @@ const EditUserDialog = ({
 								<SelectValue placeholder="Select a role" />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value="Admin">Admin</SelectItem>
-								<SelectItem value="User">User</SelectItem>
-								<SelectItem value="Manager">Manager</SelectItem>
+								<SelectItem value="admin">Admin</SelectItem>
+								<SelectItem value="user">User</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>
@@ -447,11 +497,11 @@ const EditUserDialog = ({
 						</Select>
 					</div>
 					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="joinDate" className="text-right">
+						<Label htmlFor="createdAt" className="text-right">
 							Join Date
 						</Label>
 						<Input
-							id="joinDate"
+							id="createdAt"
 							type="date"
 							value={editedUser.createdAt}
 							onChange={(e) =>
@@ -482,7 +532,7 @@ const ConfirmationDialog = ({
 	onClose: () => void;
 	onConfirm: () => void;
 	title: string;
-	description: string;
+	description: React.ReactNode;
 }) => {
 	return (
 		<Dialog open={isOpen} onOpenChange={onClose}>

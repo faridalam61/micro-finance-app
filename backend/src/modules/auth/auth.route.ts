@@ -17,5 +17,13 @@ router.post(
 	authControllers.loginUser
 );
 
-router.get("/", auth("admin","user"), authControllers.getUser)
+router.get("/", auth("admin", "user"), authControllers.getUser);
+
+// Generate new accessToken
+router.post(
+	"/refreshToken",
+	auth("admin", "user"),
+	authControllers.refreshToken
+);
+
 export const authRoutes = router;

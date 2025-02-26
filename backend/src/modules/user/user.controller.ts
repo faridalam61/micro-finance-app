@@ -46,7 +46,7 @@ const getUserById = catchAsync(async (req, res) => {
 const updateUser = catchAsync(async (req, res) => {
 	const id = req.params.id;
 	const payload = req.body;
-
+	console.log(payload);
 	const result = await userServices.updateUserIntoDB(id, payload);
 
 	sendResponse(res, {

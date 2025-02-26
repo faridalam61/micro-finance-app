@@ -12,9 +12,9 @@ import { getUserById } from "../utils/findUser";
 const auth = (...userRoles: ("user" | "admin")[]) => {
 	return catchAsync(async (req, res, next) => {
 		const token = req.headers.authorization;
-
+		console.log(token);
 		if (!token) {
-			throw new Error("Invalid token");
+			throw new Error("Token not found");
 		}
 
 		const decoded = jwt.verify(

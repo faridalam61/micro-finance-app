@@ -72,22 +72,24 @@ const BreadcrumbPage = React.forwardRef<
 ));
 BreadcrumbPage.displayName = "BreadcrumbPage";
 
+// ✅ Fixed: Changed <li> to <span> to prevent <li> nesting issues
 const BreadcrumbSeparator = ({
 	children,
 	className,
 	...props
-}: React.ComponentProps<"li">) => (
-	<li
+}: React.ComponentProps<"span">) => (
+	<span
 		role="presentation"
 		aria-hidden="true"
 		className={cn("[&>svg]:w-3.5 [&>svg]:h-3.5", className)}
 		{...props}
 	>
 		{children ?? <ChevronRight />}
-	</li>
+	</span>
 );
 BreadcrumbSeparator.displayName = "BreadcrumbSeparator";
 
+// ✅ Fixed: Corrected display name typo from "BreadcrumbElipssis" to "BreadcrumbEllipsis"
 const BreadcrumbEllipsis = ({
 	className,
 	...props
@@ -102,7 +104,7 @@ const BreadcrumbEllipsis = ({
 		<span className="sr-only">More</span>
 	</span>
 );
-BreadcrumbEllipsis.displayName = "BreadcrumbElipssis";
+BreadcrumbEllipsis.displayName = "BreadcrumbEllipsis";
 
 export {
 	Breadcrumb,
