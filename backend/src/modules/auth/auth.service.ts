@@ -1,4 +1,6 @@
+import AppError from "../../errors/appError";
 import { getUserById, getUserByPhone } from "../../utils/findUser";
+import { BAD_REQUEST, FORBIDDEN, NOT_FOUND, UNAUTHORIZED } from "../../utils/httpStatusCode";
 import { User } from "../user/user.model";
 import { TChangePassword, TLogin } from "./auth.interface";
 import bcrypt from "bcrypt";
@@ -9,19 +11,19 @@ const login = async (payload: TLogin) => {
 	// check if user is exist
 	const user = await getUserByPhone(payload.phone);
 	if (!user) {
-		throw new Error("User not found");
+		throw new AppError(NOT_FOUND,"User not found");
 	}
 
 	// check if user is blocked
-	const status = user.status;
+	const status = user?.status;
 	if (status === "blocked") {
-		throw new Error("User is blocked");
+		throw new AppError(FORBIDDEN, "User is blocked");
 	}
 
 	// check id password
 	const matchPassword = await bcrypt.compare(payload.password, user.password);
 	if (!matchPassword) {
-		throw new Error("Invalid credentials");
+		throw new AppError(UNAUTHORIZED, "Invalid credentials");
 	}
 
 	// generate access token
@@ -59,7 +61,7 @@ const changePasswordByUser = async (
 	// check if user is exist
 	const user = await getUserById(userData.id);
 	if (!user) {
-		throw new Error("User not found");
+		throw new AppError(NOT_FOUND, "User not found");
 	}
 
 	// Check if old password is matched
@@ -69,7 +71,7 @@ const changePasswordByUser = async (
 	);
 
 	if (!matchPassword) {
-		throw new Error("Password didnt match");
+		throw new AppError(BAD_REQUEST,"Password didnt match");
 	}
 	const checkSamePassword = await bcrypt.compare(
 		payload.newPassword,
@@ -78,7 +80,7 @@ const changePasswordByUser = async (
 
 	// check new password and old password is not same
 	if (checkSamePassword) {
-		throw new Error("Old password and new password cant be same");
+		throw new AppError(BAD_REQUEST,"Old password and new password cant be same");
 	}
 	// hash password
 	const hashedPassword = await bcrypt.hash(payload.newPassword, 10);
@@ -104,13 +106,13 @@ const refreshToken = async (token: string) => {
 	const { userId } = decoded;
 
 	if (!decoded) {
-		throw new Error("Invlaid token");
+		throw new AppError(UNAUTHORIZED, "Invlaid token");
 	}
 
 	// check if user exist
 	const user = await User.findById(userId);
 	if (!user) {
-		throw new Error("Invalid token");
+		throw new AppError(NOT_FOUND, "User not found");
 	}
 
 	// check user status
@@ -118,7 +120,7 @@ const refreshToken = async (token: string) => {
 	const status = user.status;
 
 	if (status === "blocked") {
-		throw new Error("User is blocked");
+		throw new AppError(FORBIDDEN,"User is blocked");
 	}
 
 	// generate access token

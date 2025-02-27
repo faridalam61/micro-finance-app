@@ -18,7 +18,12 @@ const userApi = baseApi.injectEndpoints({
 				method: "GET",
 			}),
 		}),
-
+		getSingleUser: builder.query({
+			query: (id: string) => ({
+				url: `/user/${id}`,
+				method: "GET",
+			}),
+		}),
 		createUser: builder.mutation({
 			query: (data) => ({
 				url: "/user",
@@ -45,6 +50,7 @@ const userApi = baseApi.injectEndpoints({
 
 export const {
 	useGetAllUsersQuery,
+	useGetSingleUserQuery,
 	useCreateUserMutation,
 	useDeleteUserMutation,
 	useUpdateUserMutation,
