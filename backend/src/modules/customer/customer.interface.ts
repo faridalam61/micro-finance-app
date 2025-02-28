@@ -5,6 +5,6 @@ export type TCustomer = {
 	photo: string;
 	nidPhoto: string;
 	guarantorName: string;
-	guarandtorPhone: string;
+	guarantorPhone: string;
 	guarantorNid: string;
 };

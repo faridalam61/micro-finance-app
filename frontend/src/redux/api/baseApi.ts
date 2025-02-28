@@ -30,7 +30,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 > = async (args, api, extraOptions): Promise<any> => {
 	let result = await baseQuery(args, api, extraOptions);
 
-	if (result?.error?.status === 500) {
+	if (result?.error?.status === 500 || result?.error?.status === 401) {
 		//* Send Refresh
 		console.log("Sending refresh token");
 
@@ -54,6 +54,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 			result = await baseQuery(args, api, extraOptions);
 		} else {
 			api.dispatch(logOut());
+			console.log("error");
 		}
 	}
 

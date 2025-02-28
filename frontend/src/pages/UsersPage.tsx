@@ -34,7 +34,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "../components/ui/dialog";
-import { Label } from "../components/ui/label";
 import {
 	Select,
 	SelectContent,
@@ -50,6 +49,15 @@ import {
 	useUpdateUserMutation,
 } from "../redux/feature/user/userApi";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "../components/ui/form";
 
 export default function UsersPage() {
 	const { data, isLoading, refetch } = useGetAllUsersQuery(undefined);
@@ -406,7 +414,6 @@ export default function UsersPage() {
 		</div>
 	);
 }
-
 const EditUserDialog = ({
 	user,
 	onClose,
@@ -416,14 +423,33 @@ const EditUserDialog = ({
 	onClose: () => void;
 	onSave: (user: TUser) => void;
 }) => {
-	const [editedUser, setEditedUser] = useState<TUser | null>(user);
+	const [updateUser, { isLoading }] = useUpdateUserMutation();
 
-	if (!editedUser) return null;
+	const form = useForm<TUser>({
+		defaultValues: user || {
+			_id: "",
+			name: "",
+			phone: "",
+			role: "user",
+			status: "active",
+			createdAt: "",
+		},
+	});
 
-	const handleSave = () => {
-		onSave(editedUser);
+	useEffect(() => {
+		if (user) {
+			form.reset(user);
+		}
+	}, [user, form]);
+
+	const handleSave = async (updatedData: TUser) => {
+		await updateUser({ id: updatedData._id, payload: updatedData });
+
+		onSave(updatedData);
 		onClose();
 	};
+
+	if (!user) return null;
 
 	return (
 		<Dialog open={!!user} onOpenChange={onClose}>
@@ -431,91 +457,83 @@ const EditUserDialog = ({
 				<DialogHeader>
 					<DialogTitle>Edit User</DialogTitle>
 				</DialogHeader>
-				<div className="grid gap-4 py-4">
-					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="name" className="text-right">
-							Name
-						</Label>
-						<Input
-							id="name"
-							value={editedUser.name}
-							onChange={(e) =>
-								setEditedUser({ ...editedUser, name: e.target.value })
-							}
-							className="col-span-3"
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(handleSave)} className="space-y-4">
+						<FormField
+							control={form.control}
+							name="name"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Name</FormLabel>
+									<FormControl>
+										<Input {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
 						/>
-					</div>
-					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="phone" className="text-right">
-							Phone
-						</Label>
-						<Input
-							id="phone"
-							value={editedUser.phone}
-							onChange={(e) =>
-								setEditedUser({ ...editedUser, phone: e.target.value })
-							}
-							className="col-span-3"
+
+						<FormField
+							control={form.control}
+							name="phone"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Phone</FormLabel>
+									<FormControl>
+										<Input {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
 						/>
-					</div>
-					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="role" className="text-right">
-							Role
-						</Label>
-						<Select
-							value={editedUser.role}
-							onValueChange={(value) =>
-								setEditedUser({ ...editedUser, role: value })
-							}
-						>
-							<SelectTrigger className="col-span-3">
-								<SelectValue placeholder="Select a role" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="admin">Admin</SelectItem>
-								<SelectItem value="user">User</SelectItem>
-							</SelectContent>
-						</Select>
-					</div>
-					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="status" className="text-right">
-							Status
-						</Label>
-						<Select
-							value={editedUser.status}
-							onValueChange={(value: "active" | "blocked") =>
-								setEditedUser({ ...editedUser, status: value })
-							}
-						>
-							<SelectTrigger className="col-span-3">
-								<SelectValue placeholder="Select a status" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="active">Active</SelectItem>
-								<SelectItem value="blocked">Blocked</SelectItem>
-							</SelectContent>
-						</Select>
-					</div>
-					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="createdAt" className="text-right">
-							Join Date
-						</Label>
-						<Input
-							id="createdAt"
-							type="date"
-							value={editedUser.createdAt}
-							onChange={(e) =>
-								setEditedUser({ ...editedUser, createdAt: e.target.value })
-							}
-							className="col-span-3"
+
+						<FormField
+							control={form.control}
+							name="role"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Role</FormLabel>
+									<Select onValueChange={field.onChange} value={field.value}>
+										<SelectTrigger>
+											<SelectValue placeholder="Select a role" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="admin">Admin</SelectItem>
+											<SelectItem value="user">User</SelectItem>
+										</SelectContent>
+									</Select>
+									<FormMessage />
+								</FormItem>
+							)}
 						/>
-					</div>
-				</div>
-				<DialogFooter>
-					<Button type="submit" onClick={handleSave}>
-						Save changes
-					</Button>
-				</DialogFooter>
+
+						<FormField
+							control={form.control}
+							name="status"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Status</FormLabel>
+									<Select onValueChange={field.onChange} value={field.value}>
+										<SelectTrigger>
+											<SelectValue placeholder="Select a status" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="active">Active</SelectItem>
+											<SelectItem value="blocked">Blocked</SelectItem>
+										</SelectContent>
+									</Select>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<DialogFooter>
+							<Button type="submit" className="w-full">
+								{isLoading ? "Saving..." : "Save changes"}
+							</Button>
+						</DialogFooter>
+					</form>
+				</Form>
 			</DialogContent>
 		</Dialog>
 	);

@@ -17,6 +17,8 @@ import {
 } from "../components/ui/form";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
+import { useCreatecustomerMutation } from "../redux/feature/customer/customerApi";
+import { toast } from "sonner";
 
 const MAX_FILE_SIZE = 5000000; // 5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -26,19 +28,25 @@ const ACCEPTED_IMAGE_TYPES = [
 	"image/webp",
 ];
 
+const PHONE_REGEX = /^(017|019|018|016|013|014|015)\d{8}$/; // Regex for 11-digit phone numbers starting with specified prefixes
+
 const formSchema = z.object({
 	name: z.string().min(2, {
 		message: "Name must be at least 2 characters.",
 	}),
-	phone: z.string().min(10, {
-		message: "Phone number must be at least 10 digits.",
-	}),
+	phone: z
+		.string()
+		.length(11, { message: "Phone number must be exactly 11 digits." })
+		.regex(PHONE_REGEX, {
+			message:
+				"Phone number must start with 017, 019, 018, 016, 013, 014, or 015.",
+		}),
 	address: z.string().min(5, {
 		message: "Address must be at least 5 characters.",
 	}),
 	photo: z
 		.any()
-		.refine((files) => files?.length == 1, "Photo is required.")
+		.refine((files) => files?.length === 1, "Photo is required.")
 		.refine(
 			(files) => files?.[0]?.size <= MAX_FILE_SIZE,
 			`Max file size is 5MB.`
@@ -49,7 +57,7 @@ const formSchema = z.object({
 		),
 	nidPhoto: z
 		.any()
-		.refine((files) => files?.length == 1, "NID photo is required.")
+		.refine((files) => files?.length === 1, "NID photo is required.")
 		.refine(
 			(files) => files?.[0]?.size <= MAX_FILE_SIZE,
 			`Max file size is 5MB.`
@@ -64,9 +72,15 @@ const formSchema = z.object({
 	guarantorId: z.string().min(5, {
 		message: "Guarantor ID must be at least 5 characters.",
 	}),
-	guarantorPhone: z.string().min(10, {
-		message: "Guarantor phone number must be at least 10 digits.",
-	}),
+	guarantorPhone: z
+		.string()
+		.length(11, {
+			message: "Guarantor phone number must be exactly 11 digits.",
+		})
+		.regex(PHONE_REGEX, {
+			message:
+				"Guarantor phone number must start with 017, 019, 018, 016, 013, 014, or 015.",
+		}),
 });
 
 export function ApplicationForm() {
@@ -74,6 +88,8 @@ export function ApplicationForm() {
 	const [nidPhotoPreview, setNidPhotoPreview] = React.useState<string | null>(
 		null
 	);
+
+	const [createCustomer, { isLoading }] = useCreatecustomerMutation();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -87,10 +103,55 @@ export function ApplicationForm() {
 		},
 	});
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values);
-	}
+	async function onSubmit(values: z.infer<typeof formSchema>) {
+		try {
+			// Create a FormData object
+			const formData = new FormData();
 
+			// Append the files
+			if (values.photo && values.photo.length > 0) {
+				formData.append("photo", values.photo[0]);
+			} else {
+				throw new Error("Photo is required.");
+			}
+
+			if (values.nidPhoto && values.nidPhoto.length > 0) {
+				formData.append("nidPhoto", values.nidPhoto[0]);
+			} else {
+				throw new Error("NID photo is required.");
+			}
+
+			// Create an object for the other fields
+			const data = {
+				name: values.name,
+				phone: values.phone,
+				address: values.address,
+				guarantorName: values.guarantorName,
+				guarantorNid: values.guarantorId,
+				guarantorPhone: values.guarantorPhone,
+			};
+
+			// Append the data object as a JSON string
+			formData.append("data", JSON.stringify(data));
+
+			// Send the FormData to the server
+			const res = await createCustomer(formData);
+			if (res.error) {
+				console.error("Error response from server:", res.error);
+				toast.error("Failed to create customer. Please try again.");
+			} else {
+				console.log("Success response from server:", res.data);
+				toast.success("Customer created successfully!");
+				form.reset();
+				setPhotoPreview(null);
+				setNidPhotoPreview(null);
+			}
+		} catch (err) {
+			// Handle any errors that occur during the submission process
+			console.error("Error occurred during form submission:", err);
+			toast.error("An error occurred while submitting the form.");
+		}
+	}
 	const handleFileChange = (
 		e: React.ChangeEvent<HTMLInputElement>,
 		setPreview: (preview: string | null) => void
@@ -184,8 +245,8 @@ export function ApplicationForm() {
 												<img
 													src={photoPreview || "/placeholder.svg"}
 													alt="Photo preview"
-													width={100}
-													height={100}
+													width={200}
+													height={200}
 													className="rounded-md"
 												/>
 											</div>
@@ -219,8 +280,8 @@ export function ApplicationForm() {
 												<img
 													src={nidPhotoPreview || "/placeholder.svg"}
 													alt="NID Photo preview"
-													width={100}
-													height={100}
+													width={200}
+													height={200}
 													className="rounded-md"
 												/>
 											</div>
@@ -287,7 +348,9 @@ export function ApplicationForm() {
 					/>
 				</div>
 
-				<Button type="submit">Submit Application</Button>
+				<Button type="submit">
+					{isLoading ? "Please wait..." : "Submit Application"}
+				</Button>
 			</form>
 		</Form>
 	);

@@ -6,7 +6,18 @@ import { customerServices } from "./customer.service";
 // Create customer
 const createCustomer = catchAsync(async (req, res) => {
 	const payload = req.body;
-	const result = await customerServices.createCustomerIntoDB(payload);
+
+	const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+	console.log("files", files);
+	console.log("payload", payload);
+	const photoFile = files.photo ? files.photo[0] : null;
+	const nidFile = files.nidPhoto ? files.nidPhoto[0] : null;
+
+	const result = await customerServices.createCustomerIntoDB(
+		photoFile,
+		nidFile,
+		payload
+	);
 
 	sendResponse(res, {
 		statusCode: OK,

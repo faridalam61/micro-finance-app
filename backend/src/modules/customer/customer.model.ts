@@ -9,7 +9,7 @@ const customerSchema = new Schema<TCustomer>(
 		photo: { type: String, required: true },
 		nidPhoto: { type: String, required: true },
 		guarantorName: { type: String, required: true },
-		guarandtorPhone: { type: String, required: true },
+		guarantorPhone: { type: String, required: true },
 		guarantorNid: { type: String, required: true },
 	},
 	{ timestamps: true }

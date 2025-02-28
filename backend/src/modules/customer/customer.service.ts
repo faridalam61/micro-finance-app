@@ -1,8 +1,31 @@
+import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
 import { TCustomer } from "./customer.interface";
 import { Customer } from "./customer.model";
 
 // Create customer
-const createCustomerIntoDB = async (payload: TCustomer) => {
+const createCustomerIntoDB = async (
+	photoFile: any,
+	nidFile: any,
+	payload: TCustomer
+) => {
+	const photoName = `photo-${Date.now()}`;
+	const nidName = `nid-${Date.now()}`;
+
+	// Upload images to Cloudinary
+	const { secure_url: photoUrl } = await sendImageToCloudinary(
+		photoName,
+		photoFile?.path
+	);
+	const { secure_url: nidUrl } = await sendImageToCloudinary(
+		nidName,
+		nidFile?.path
+	);
+
+	// Assign URLs to payload
+	payload.photo = photoUrl;
+	payload.nidPhoto = nidUrl;
+
+	// Save to database
 	const result = await Customer.create(payload);
 	return result;
 };

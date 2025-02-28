@@ -2,6 +2,7 @@ import express from "express";
 import { validateRequest } from "../../utils/validateRequest";
 import { customerValidation } from "./customer.validation";
 import { customerController } from "./customer.controller";
+import { upload } from "../../utils/sendImageToCloudinary";
 
 const router = express.Router();
 
@@ -10,7 +11,13 @@ const router = express.Router();
 // Create customer
 router.post(
 	"/",
-	validateRequest(customerValidation.createCustomerSchema),
+	upload,
+	(req, res, next) => {
+		console.log("rrr", req.body);
+		req.body = JSON.parse(req.body.data);
+		next();
+	},
+	// validateRequest(customerValidation.createCustomerSchema),
 	customerController.createCustomer
 );
 
