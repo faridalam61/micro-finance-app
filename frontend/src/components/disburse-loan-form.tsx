@@ -1,6 +1,3 @@
-"use client";
-
-import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -10,7 +7,6 @@ import { Button } from "../components/ui/button";
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -41,12 +37,8 @@ import {
 	AlertDialogTitle,
 } from "../components/ui/alert-dialog";
 import { cn } from "../lib/utils";
-
-const users = [
-	{ label: "John Doe", value: "john.doe" },
-	{ label: "Jane Smith", value: "jane.smith" },
-	{ label: "Bob Johnson", value: "bob.johnson" },
-] as const;
+import { useEffect, useState } from "react";
+import { useGetAllcustomerQuery } from "../redux/feature/customer/customerApi";
 
 const formSchema = z.object({
 	user: z.string({
@@ -67,9 +59,28 @@ const formSchema = z.object({
 		.max(100, "Interest rate cannot exceed 100%."),
 });
 
+type TCustomer = {
+	label: string;
+	value: string;
+	name: string;
+	_id: string;
+};
+
 export function DisburseLoanForm() {
-	const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
-	const [open, setOpen] = React.useState(false);
+	const { data, isLoading } = useGetAllcustomerQuery(undefined);
+	const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+	const [open, setOpen] = useState(false);
+	const [customers, setCustomers] = useState<TCustomer[]>([]); // Initialize as an empty array
+
+	useEffect(() => {
+		if (data) {
+			const formattedCustomers = data.data.map((customer: TCustomer) => ({
+				label: customer.name,
+				value: customer._id,
+			}));
+			setCustomers(formattedCustomers);
+		}
+	}, [data]);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -108,7 +119,7 @@ export function DisburseLoanForm() {
 											)}
 										>
 											{field.value
-												? users.find((user) => user.value === field.value)
+												? customers.find((user) => user.value === field.value)
 														?.label
 												: "Select user"}
 											<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -119,36 +130,40 @@ export function DisburseLoanForm() {
 									<Command>
 										<CommandInput placeholder="Search user..." />
 										<CommandList>
-											<CommandEmpty>No user found.</CommandEmpty>
-											<CommandGroup>
-												{users.map((user) => (
-													<CommandItem
-														value={user.label}
-														key={user.value}
-														onSelect={() => {
-															form.setValue("user", user.value);
-															setOpen(false);
-														}}
-													>
-														<Check
-															className={cn(
-																"mr-2 h-4 w-4",
-																user.value === field.value
-																	? "opacity-100"
-																	: "opacity-0"
-															)}
-														/>
-														{user.label}
-													</CommandItem>
-												))}
-											</CommandGroup>
+											{isLoading ? ( // Check if loading
+												<CommandEmpty>Loading data...</CommandEmpty> // Show loading message
+											) : (
+												<>
+													<CommandEmpty>No user found.</CommandEmpty>
+													<CommandGroup>
+														{customers.map((user) => (
+															<CommandItem
+																value={user.value}
+																key={user.value}
+																onSelect={() => {
+																	form.setValue("user", user.value);
+																	setOpen(false);
+																}}
+															>
+																<Check
+																	className={cn(
+																		"mr-2 h-4 w-4",
+																		user.value === field.value
+																			? "opacity-100"
+																			: "opacity-0"
+																	)}
+																/>
+																{user.label}
+															</CommandItem>
+														))}
+													</CommandGroup>
+												</>
+											)}
 										</CommandList>
 									</Command>
 								</PopoverContent>
 							</Popover>
-							<FormDescription>
-								Select the user applying for the loan.
-							</FormDescription>
+
 							<FormMessage />
 						</FormItem>
 					)}
@@ -169,9 +184,7 @@ export function DisburseLoanForm() {
 									}
 								/>
 							</FormControl>
-							<FormDescription>
-								Enter the requested loan amount in dollars.
-							</FormDescription>
+
 							<FormMessage />
 						</FormItem>
 					)}
@@ -192,9 +205,7 @@ export function DisburseLoanForm() {
 									}
 								/>
 							</FormControl>
-							<FormDescription>
-								Enter the annual interest rate as a percentage.
-							</FormDescription>
+
 							<FormMessage />
 						</FormItem>
 					)}
@@ -208,7 +219,9 @@ export function DisburseLoanForm() {
 						).toFixed(2)}
 					</div>
 				)}
-				<Button type="submit">Submit Application</Button>
+				<Button type="submit" className="w-full">
+					{isLoading ? "Please wait.." : "Disburse loan"}
+				</Button>
 			</form>
 
 			<AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
